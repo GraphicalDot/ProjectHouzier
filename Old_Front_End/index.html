@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+
+	<head>
+		<title img=>Mad Machines REProE</title>
+		<meta name="description" content="Mad Machines REProEPOC">
+		<meta charset="UTF-8">
+		<link href="css/bootstrap.css" rel="stylesheet">
+		<link href="css/main.css" rel="stylesheet">
+		<link href="css/another.css" rel="stylesheet">
+		<link href="css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="css/jquery-ui.css" rel="stylesheet">
+		<link href="css/tablecloth.css" rel="stylesheet">
+		<link href="css/tipsy.css" rel="stylesheet">
+		<link href="css/jquery.vegas.css" rel="stylesheet">
+		<script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap/bootstrap.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap/bootstrap-tooltip.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap/bootstrap-popover.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap/bootstrap-transition.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap/bootstrap-dropdown.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap/twitter-bootstrap-hover-dropdown.js"></script>
+		<script type="text/javascript" src="js/libs/handlebars/handlebars-1.0.rc.1.min.js"></script>
+		<script type="text/javascript" src="js/libs/mustache/mustache.js"></script>
+		<script type="text/javascript" src="js/libs/underscore/underscore.js"></script>
+		<script type="text/javascript" src="js/libs/underscore/underscore.string.min.js"></script>
+		<script type="text/javascript" src="js/libs/bootbox/bootbox.min.js"></script>
+		<script type="text/javascript" src="js/libs/tablecloth/jquery.metadata.js"></script>
+		<script type="text/javascript" src="js/libs/tablecloth/jquery.tablesorter.js"></script>
+		<script type="text/javascript" src="js/libs/tablecloth/jquery.tablecloth.js"></script>
+		<script type="text/javascript" src="js/libs/backbone/backbone.js"></script>
+		<script type="text/javascript" src="js/libs/Jquery-validate/jquery.validate.js"></script>
+		<script type="text/javascript" src="js/libs/jquery-cookie/jquery.cookie.js"></script>
+		<script type="text/javascript" src="js/libs/jquery.tagcloud.js"></script>
+		<script type="text/javascript" src="js/libs/d3/d3.js"></script>
+		<script type="text/javascript" src="js/libs/d3.layout.cloud.js"></script>
+		<script type="text/javascript" src="js/libs/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/libs/jquery.tipsy.js"></script>
+		<script type="text/javascript" src="js/libs/cola.v3.min.js"></script>
+		<script type="text/javascript" src="js/libs/d3.tip.v0.6.3.js"></script>
+		<script type="text/javascript" src="js/libs/jquery.vegas.min.js"></script>
+		<script type="text/javascript" src="js/hovercard.js"></script>
+
+	</head>
+	<body>
+
+	<script type="text/x-mustache-template" id="fb-login-template">
+		window.fbAsyncInit = function(){
+				FB.init({
+				appId : '767935519986527',
+				xfbml : true,
+				version : 'v2.3'});
+				};
+
+		(function(d, s, id){
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/en_US/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+
+	</script>
+	<script type="text/x-mustache-template" id="root-row-template">
+                <div class="span8">
+                        <p style="text-align: center">{{sentence}}</p>
+                </div>
+                
+		<div class="span2">
+                        <div class="btn-group">
+                                <select id="ddpFiltersentiment" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown" style="width: 98%">
+                                        <option value="1" disabled>super-positive</option>
+                                        <option value="2" disabled>positive</option>
+                                        <option value="3" disabled>neutral</option>
+                                        <option value="4" disabled>negative</option>
+                                        <option value="5" disabled>super-negative</option>
+                                        <option value="6" disabled>mixed</option>
+                                </select>
+                        </div>
+                        </div>
+	</script>
+
+
+	<script type="text/x-mustache-template" id="see-word-cloud-date-selection-template">
+		<div class="control-group">
+				<label  class="control-label">Word Cloud Category</label>
+					<div class="controls">
+						<select id="wordCloudCategory">
+							<ul id="wordCloudCategory" class="dropdown-menu">
+								<option>Food</option>
+								<option>Service</option>
+								<option>Ambience</option>
+								<option>Cost</option>
+							</ul>	
+						</select>
+					</div>
+		</div>
+			
+		<button id="idSubmit" class="btn btn-primary" style="text-align: center">Submit</button>
+		<button id="idCancel" class="btn btn-primary" style="text-align: center">Cancel</button>
+	
+		
+	</script>	
+	<script type="text/x-mustache-template" id="root-template">
+		<caption><b>Restaurants</b></caption>	
+		 <tbody class="append_eatery" >
+
+			
+		 </tbody>
+		
+
+
+	</script>
+	<script type="text/x-mustache-template" id="append-restaurant-template">
+		<td>
+			<label class="checkbox">
+				<input type="checkbox" value="{{eatery_name}}" id={{eatery_id}} class="change_eatery_id">
+				{{eatery_name}}
+			</label>
+		</td>
+	</script>
+
+
+
+<div class="container-fluid">                                                                                                              
+            <div class="row-fluid">   
+		                
+                
+		    <div class="navbar">
+			    <div class="page-header panel panel-default">
+			<h4>Mad Machines REProE<span class="label label-default" id="version">version 3.00</span></h4>       
+			</div>
+            </div>
+        	</div>
+
+            
+        <div class="row-fluid new_body">
+        	<div class="row-fluid">
+			<div class="span2 side-bar">
+				<!--Sidebar content-->
+			</div>
+			<div class="span10 main-body">
+				<!--Body content-->
+			</div>
+		</div>	
+	
+        	<div class="row-fluid">
+			<div class="sentences">
+		</div>	
+		</div>	
+	
+	
+	
+	</div>
+	<!--
+	<script>
+		$("#version")
+		.mouseover(function() {
+			bootbox.alert("From now on, The version number will be based on git commits, so that we can keep up the track of code, on which this front end is running")
+    });
+</script>   
+-->
+	<script src="js/Global-variables.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/main-backbone.js"></script>
+    <script src="js/word_cloud.js"></script>
+    <!-- <script src="js/for_one_page.js"></script> -->
+    
+    <script>$(function() { App.boot($('.dynamic_display_header')); });</script> 
+
+
+    </body>
+</html>
+
+
+
+

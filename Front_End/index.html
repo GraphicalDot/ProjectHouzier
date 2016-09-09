@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Sentiments Chart</title>
+	<link rel="stylesheet" href="nv.d3.css">
+	<script src="libs/jquery-2.2.0.min.js"></script>
+	<script src="libs/d3.min.js" charset="utf-8"></script>
+	<script src="libs/nv.d3.js"></script>
+	<style>
+		text { font: 12px sans-serif; }
+
+		svg { display: block; }
+
+		html,
+		body{
+			height: 100%;
+			width: 100%;
+		}
+
+		.barChart {
+			margin: 15px;
+			width: 800px;
+			height: 600px;
+		}
+	</style>
+</head>
+
+<body>
+	<input type="text" id="eatery_id" placeholder="Enter a eatery id here">
+	<div class="barChart">
+		<svg id="ambience"></svg>
+	</div>
+	<div class="barChart">
+		<svg id="cost"></svg>
+	</div>
+	<div class="barChart">
+		<svg id="food"></svg>
+	</div>
+	<div class="barChart">
+		<svg id="service"></svg>
+	</div>
+
+	<script src="app.js"></script>
+</body>
+
+</html>

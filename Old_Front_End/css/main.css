@@ -1,0 +1,284 @@
+           
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+@import url(http://fonts.googleapis.com/css?family=Audiowide);
+@import url(http://fonts.googleapis.com/css?family=Margarine);
+@import url(http://fonts.googleapis.com/css?family=Marko+One);
+
+.searchbox{
+    background-color:#fffbf8;
+    padding:13px;
+    width:335px;
+    margin:100px auto;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    border-radius:6px;
+    -webkit-box-shadow:
+        0 2px 4px 0 rgba(72, 72, 72, 0.83),
+        0 10px 15px 0 rgba(126, 126, 126, 0.12),
+        0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 
+        0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    -moz-box-shadow: 
+        0 2px 4px 0 rgba(72, 72, 72, 0.83),
+        0 10px 15px 0 rgba(126, 126, 126, 0.12),
+        0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 
+        0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+    box-shadow: 
+        0 2px 4px 0 rgba(72, 72, 72, 0.83),
+        0 10px 15px 0 rgba(126, 126, 126, 0.12),
+        0 -2px 6px 1px rgba(199, 199, 199, 0.55) inset, 
+        0 2px 4px 2px rgba(255, 255, 255, 0.83) inset;
+}
+
+/*This segment deals with the vertical scroll of the table elementof the 
+ * bootstrap */
+
+
+
+
+/*.no-border td, .no-border tr .no-border th .no-border tbody{*/
+.no-border tbody tr td, .no-border tbody tr th, .no-border thead tr th {
+		border: none;
+	}
+.well {
+	  margin-bottom: 5px;
+	  margin-top: 5px;
+  }
+
+table.scroll {
+	    border-spacing: 0;
+	        border: 2px solid black;
+	}
+
+table.scroll tbody,
+table.scroll thead { display: block; }
+/*
+thead tr th { 
+		height: 100vh;
+		line-height: 30px;
+	}
+*/
+table.scroll tbody {
+		height: 100vh;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+/*
+tbody { border-top: 2px solid black; }
+tbody td, thead th {
+	border-right: 1px solid black;
+}
+
+tbody td:last-child, thead th:last-child {
+	border-right: none;
+}
+
+*/
+
+body{
+    padding-top: 10px;
+    padding-bottom: 10px;
+	background-size:   cover;                      /* <------ */
+	    background-repeat: no-repeat;
+}
+
+h3{
+	  font: bold 48px monospace;
+  }
+
+.pricing-table .plan {
+  border-radius: 5px;
+  text-align: center;
+  background-color: #f3f3f3;
+  -moz-box-shadow: 0 0 50px 2px #b0b2ab;
+  -webkit-box-shadow: 0 0 6px 2px #b0b2ab;
+  box-shadow: 0 0 50px 2px #b0b2ab;
+}
+
+.blocks 
+{
+	    padding: 10px 10px 10px 10px ;
+	    margin: 5px 5px 5px 5px;  
+	    border-radius: 20;
+		    }
+
+.topheader 
+{
+	    padding: 10px 10px 10px 10px ;
+	    margin: 0px 0px 0px 0px;  
+	    border-radius: 20;
+		    }
+
+
+ .plan {
+  padding: 20px;
+  color: #ff;
+  background-color: #C8C8C8 ;
+  -moz-border-radius: 10px 10px 10px 10px;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+}
+  
+.plan-name-bronze {
+  padding: 20px;
+  color: #fff;
+  background-color: #665D1E;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+ }
+  
+.plan-name-silver {
+  padding: 20px;
+  color: #fff;
+  background-color: #C0C0C0;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+ }
+  
+.plan-name-gold {
+  padding: 20px;
+  color: #fff;
+  background-color: #FFD700;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+  } 
+  
+.pricing-table-bronze  {
+  padding: 20px;
+  color: #fff;
+  background-color: #f89406;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-radius: 5px 5px 0 0;
+}
+  
+.pricing-table .plan .plan-name span {
+  font-size: 20px;
+}
+ 
+.pricing-table .plan ul {
+  list-style: none;
+  margin: 0;
+  -moz-border-radius: 0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+}
+ 
+.pricing-table .plan ul li.plan-feature {
+  padding: 15px 10px;
+  border-top: 1px solid #c5c8c0;
+}
+ 
+.pricing-three-column {
+  margin: 0 auto;
+  width: 80%;
+}
+ 
+.pricing-variable-height .plan {
+  float: none;
+  margin-left: 2%;
+  vertical-align: bottom;
+  display: inline-block;
+  zoom:1;
+  *display:inline;
+}
+ 
+.plan-mouseover .plan-name {
+  background-color: #4e9a06 !important;
+}
+ 
+.btn-plan-select {
+  padding: 8px 25px;
+  font-size: 18px;
+}
+
+.navbar .navbar-inner {
+    padding: 0;
+}
+
+.navbar .nav {
+    margin: 0;
+    display: table;
+    width: 100%;
+}
+
+.navbar .nav li {
+    display: table-cell;
+    width: 10%;
+    float: none;
+}
+
+.nav .nav-pills {
+    display: table;
+    margin: 0;
+    height: 100%;
+}
+
+#sidebar {
+        background-color: #2C2C2C;
+        margin-left: 0px;
+        position: absolute;
+        padding: 40%;
+        bottom: 0px;
+        height: 100%}
+
+#sidebar > .nav > li > a{
+    padding: 20px;
+margin-top: 10em;
+ margin-bottom: 40px;
+}
+
+.scrollable-menu {
+	    height: 150px;
+	    max-height: 150px;
+	   overflow-x: hidden;
+	    }
+.bootbox-modal-custom-class{
+	font-weight: 400;
+	width: 1200px;	
+	position:fixed;
+	 left:30%; 
+}
+
+.dvLoading
+{	background:#000 url(images/loading.gif) no-repeat center center;
+	z-index: 100000000;
+}
+
+
+
+
+.bar {
+				display: inline-block;
+				width: 20px;
+				height: 75px;	/* Gets overriden by D3-assigned height below */
+				margin-right: 2px;
+				background-color: teal;
+			}
+
+text {
+	  font: bold 48px monospace;
+  }
+
+.enter {
+	    fill: green;
+    }
+.update {
+	      fill: #333;
+      }
+
+.loadingclass {
+	width: 380px;
+	background: #000000;      
+	   overflow-x: hidden;
+}
+
+#node-bubble {
+	font-family: 'Marko One', cursive;
+}
+
+
