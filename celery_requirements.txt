@@ -1,4 +1,0 @@
-https://github.com/celery/celery/zipball/master#egg=celery
-https://github.com/celery/billiard/zipball/master#egg=billiard
-https://github.com/celery/py-amqp/zipball/master#egg=amqp
-https://github.com/celery/kombu/zipball/master#egg=kombu
