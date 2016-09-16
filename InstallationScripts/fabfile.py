@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+
+
 from __future__ import with_statement
-from fabric.api import show, local, settings, prefix, abort, run, cd, env, require, hide, execute
+from fabric.api import task, show, local, settings, prefix, abort, run, cd, env, require, hide, execute
 from fabric.contrib.console import confirm
 from fabric.network import disconnect_all
 from fabric.colors import green as _green, yellow as _yellow, red as _red
@@ -7,6 +10,9 @@ from fabric.contrib.files import exists
 from fabric.utils import error
 import os
 import time
+from fabric.operations import local as lrun, run
+
+
 
 env.use_ssh_config = True
 #env.hosts = ["ec2-54-68-29-37.us-west-2.compute.amazonaws.com"] ##For t2 medium
@@ -19,32 +25,59 @@ env.warn_only = True
 This is the file which remotely makes an ec2 instance for the use of this repository
 """
 
+@task
 def basic_setup():
 	""""
 	This method should be run before installing virtual environment as it will install python pip
 	required to install virtual environment
 
 	"""
-	run("sudo apt-get update")
-	run("sudo apt-get upgrade")
-	run("sudo apt-get install -y python-pip")
-	run("sudo apt-get install -y libevent-dev")
-	run("sudo apt-get install -y python-all-dev")
-	run("sudo apt-get install -y ipython")
-	run("sudo apt-get install -y libxml2-dev")
-	run("sudo apt-get install -y libxslt1-dev") 
-	run("sudo apt-get install -y python-setuptools python-dev build-essential")
-	run("sudo apt-get install -y libxml2-dev libxslt1-dev lib32z1-dev")
-	run("sudo apt-get install -y python-lxml")
+	env.run("sudo apt-get update")
+	env.run("sudo apt-get upgrade")
+	env.run("sudo apt-get install -y python-pip")
+	env.run("sudo apt-get install -y libevent-dev")
+	env.run("sudo apt-get install -y python-all-dev")
+	env.run("sudo apt-get install -y ipython")
+	env.run("sudo apt-get install -y libxml2-dev")
+	env.run("sudo apt-get install -y libxslt1-dev") 
+	env.run("sudo apt-get install -y python-setuptools python-dev build-essential")
+	env.run("sudo apt-get install -y libxml2-dev libxslt1-dev lib32z1-dev")
+	env.run("sudo apt-get install -y python-lxml")
 	#Dependencies for installating sklearn
-	run("sudo apt-get install -y build-essential python-dev python-setuptools python-numpy python-scipy libatlas-dev libatlas3gf-base")
-	run("sudo apt-get install -y python-matplotlib")
+	env.run("sudo apt-get install -y build-essential python-dev python-setuptools python-numpy python-scipy libatlas-dev libatlas3gf-base")
+	env.run("sudo apt-get install -y python-matplotlib")
 	#Dependencies for installating scipy
-	run("sudo apt-get install -y liblapack-dev libatlas-dev gfortran")
-	run("sudo apt-get install -y libatlas-base-dev gfortran build-essential g++ libblas-dev")
+	env.run("sudo apt-get install -y liblapack-dev libatlas-dev gfortran")
+	env.run("sudo apt-get install -y libatlas-base-dev gfortran build-essential g++ libblas-dev")
 	#Dependicies to install hunpostagger
-	run("sudo apt-get install -y ocaml-nox")
-	run("sudo apt-get install -y mercurial")
+	env.run("sudo apt-get install -y ocaml-nox")
+	env.run("sudo apt-get install -y mercurial")
+
+
+
+@task
+def localhost():
+    env["user"] = "kaali"
+    env.run = lrun
+    env.hosts = ['localhost']
+
+@task
+def remote():
+    env.run = run
+    env.hosts = ['52.74.143.163']
+    env.use_ssh_config = True
+    env.user = "ubuntu"
+    env.key_filename = "/home/kmama02/Downloads/madmachines.pem"
+    env.warn_only = True
+    env.port = 22
+
+
+
+
+
+
+
+
 
 
 def increase_swap():
