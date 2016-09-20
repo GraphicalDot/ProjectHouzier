@@ -33,7 +33,9 @@ class PreProcessText(object):
                 occurence 
                 """
                 text = re.sub('\)+', ')', text)
-                text = re.sub('\.+', '.', text)
+                text = re.sub("\.{2,10000}", " ", text) 
+                text = re.sub("\?{2,10000}", " ", text) 
+                text = re.sub("\!{2,10000}", " ", text) 
                 return text
 
 
@@ -55,9 +57,15 @@ class PreProcessText(object):
                 text = re.sub("\*+", "", text)
                 text = re.sub("#+", " ", text)
                 #text = re.sub("\d+.\d+/\d+", " ", text)
-                text = re.sub("7/10|8/10|9/10|10/10|4/5|5/5", "good", text)
-                text = re.sub("4/10|5/10|6/10|3/5", "average", text)
-                text = re.sub("1/10|2/10|3/10|1/5|2/5", "poor", text)
+                text = re.sub("[4,5]\s{0,2}/\s{0,2}5", " good", text)
+                text = re.sub("[7,10]\s{0,2}/\s{0,2}10", " good", text)
+                
+                text = re.sub("3\s{0,2}/\s{0,2}5", " average", text)
+                text = re.sub("[4,6]\s{0,2}/\s{0,2}10", " average", text)
+                
+                text = re.sub("[1,2]\s{0,2}/\s{0,2}5", " good", text)
+                text = re.sub("[1,3]\s{0,2}/\s{0,2}10", " good", text)
+
                 re.sub("\d+/\d+", " ", text)
                 text = re.sub("\d+", " ", text)
 
@@ -81,16 +89,16 @@ def test():
         reviews = connection.Reviews.ZomatoReviews
         j = random.choice(range(20))
         i = 0
-        for post in reviews.find().skip(j):
-                        text = post.get("review_text")
-                        _text = PreProcessText.convert_lowercase(text)
-                        _text = PreProcessText.remove_all_instances(_text)
-                        _text = PreProcessText.remove_and_replace(_text)
-                        print text, "\n", t.red(_text), "\n\n"
-                        j += random.choice(range(20))
-                        i += 1
-                        if i == 100:
-                                break
+        for post in reviews.find().skip(j):     
+                text = post.get("review_text")
+                _text = PreProcessText.convert_lowercase(text)
+                _text = PreProcessText.remove_all_instances(_text)
+                _text = PreProcessText.remove_and_replace(_text)
+                print text, "\n", t.red(_text), "\n\n"
+                j += random.choice(range(20))
+                i += 1
+                if i == 100:
+                    break
                         
 
         return 
@@ -100,7 +108,34 @@ def test():
 
 
 if __name__ == "__main__":
-        test()
+        #test()
+        import pymongo
+        from blessings import Terminal
+        terminal = Terminal()
+        connection = pymongo.MongoClient()
+        training_data = connection.training_data
+        sentiment_collection = training_data.training_sentiment_collection
+		
+        _list = list()
+        for post in sentiment_collection.find():
+            _list.append((post.get("sentiment"), post.get("sentence")))
+	
+                         
+        sentiments = list()
+        sentiment_list = list(set(_list))
+        for (sentiment, sentence) in sentiment_list:
+                text = PreProcessText.remove_all_instances(sentence)
+                text = PreProcessText.remove_and_replace(text)
+                print sentiment
+                print terminal.red(sentence)
+                print terminal.green(text), "\n\n"
+                sentiments.append((sentiment, text))
+
+
+
+
+
+
 
 
 

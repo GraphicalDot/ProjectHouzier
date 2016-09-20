@@ -170,7 +170,7 @@ class InMemoryMainClassifier(object):
 		return classifier
 	
         
-        @timeit
+    @timeit
 	def svm_grid_search_classifier(self):
 		print "\n Running {0} \n".format(inspect.stack()[0][3])
 		instance = SVMWithGridSearch(self.training_sentences, self.training_target_tags)
@@ -178,9 +178,9 @@ class InMemoryMainClassifier(object):
 		return classifier
 
         
-        @timeit
+    @timeit
 	def svm_linear_kernel_classifier(self):
-                print "\n Running {0} \n".format(inspect.stack()[0][3])
+        print "\n Running {0} \n".format(inspect.stack()[0][3])
 		classifier = Pipeline([ ('vect', CountVectorizer(ngram_range=(1, 6), analyzer="char_wb")),
                     ('tfidf', TfidfTransformer()),
                     ('chi2', SelectKBest(chi2, k="all")),
@@ -188,9 +188,35 @@ class InMemoryMainClassifier(object):
             
             
             
-	        classifier.fit(self.training_sentences, self.training_target_tags)  
+	    classifier.fit(self.training_sentences, self.training_target_tags)  
 		return classifier
 
+
+    @timeit
+	def svm_linear_kernel_classifier(self):
+        sklearn.base.TransformerMixin¶
+		class DenseTransformer(TransformerMixin):
+
+    def transform(self, X, y=None, **fit_params):
+        return X.todense()
+
+    def fit_transform(self, X, y=None, **fit_params):
+        self.fit(X, y, **fit_params)
+        return self.transform(X)
+
+    def fit(self, X, y=None, **fit_params):
+        return self
+
+        print "\n Running {0} \n".format(inspect.stack()[0][3])
+		classifier = Pipeline([ ('vect', CountVectorizer(ngram_range=(1, 6), analyzer="char_wb")),
+                    ('tfidf', TfidfTransformer()),
+                    ('chi2', SelectKBest(chi2, k="all")),
+                    ('clf', SVC(C=1, kernel="linear", gamma=.0001)),])     
+            
+            
+            
+	    classifier.fit(self.training_sentences, self.training_target_tags)  
+		return classifier
 
 
 
