@@ -65,9 +65,10 @@ class SentimentSimilaritySenteceView(object):
                 return 
 
         def _vectorize(self): 
-                training_sentiment_tags, training_sentences = zip(*sentiment_sentences)
+                _sentiment_sentences = sentiment_sentences[0:1000]
+                self.training_sentiment_tags, self.training_sentences = zip(*_sentiment_sentences)
                 vectorizer = CountVectorizer()
-                dtm = vectorizer.fit_transform(training_sentences)  # a sparse
+                dtm = vectorizer.fit_transform(self.training_sentences)  # a sparse
                 print "These are some features"
                 #print vectorizer.get_feature_names()
                 print "shape of the document matrix is rows=%s,columns=%s"%dtm.shape
@@ -101,10 +102,11 @@ class SentimentSimilaritySenteceView(object):
                 pos = mds.fit_transform(dist)  # shape (n_components,n_samples)
 
                 xs, ys = pos[:, 0], pos[:, 1]
-                for x, y in zip(xs, ys):
-                        #color = 'orange' if "Austen" in name else 'skyblue'
+                for x, y, tag in zip(xs, ys, self.training_sentiment_tags):
+                        _tag = tag.split("-")[-1]
+                        color = 'red' if _tag == "negative" else 'black'
                         plt.scatter(x, y, c=color)
-                        plt.text(x, y, name)
+                        plt.text(x, y, _tag[0:3])
                 plt.show()
                 return 
 
