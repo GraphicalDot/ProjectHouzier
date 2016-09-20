@@ -72,14 +72,6 @@ def remote():
     env.port = 22
 
 
-
-
-
-
-
-
-
-
 def increase_swap():
 	"""
 	Scipy needs generally need more ram to install, this function increase the swap by allocating some harddisk 
