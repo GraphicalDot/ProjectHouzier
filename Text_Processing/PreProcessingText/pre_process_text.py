@@ -12,9 +12,13 @@ class PreProcessText(object):
 
 
         @staticmethod
-        def convert_lowercase(text):
-                return text.lower()
-        
+        def process(text):
+                text = PreProcessText.convert_lowercase(text)
+                text = PreProcessText.remove_all_instances(sentence)
+                text = PreProcessText.remove_and_replace(text)
+                return text
+
+
         
         @staticmethod
         def remove_numbers(text):

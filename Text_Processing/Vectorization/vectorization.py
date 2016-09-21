@@ -18,16 +18,16 @@ from nltk.stem import SnowballStemmer
 filename = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(filename)
 import PreProcessingText
+#https://dandelion.eu/semantic-text/entity-extraction-demo/
+#http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/
 
-
-
-#f = open("sentiment_training_sentences.pickle", "rb")
-#sentiment_sentences = pickle.load(f)
 
 class HouzierVectorizer(object):
 
-        def __init__(self, sentiment_sentences_list, ngram_range=[1, 6],
-                     preprocessor_callable):
+        def __init__(self, sentiment_sentences_list, preprocessor_callable,
+                     use_dense_matrix=False): 
+                
+            
                 """
                 tags = [
                   "python, tools",
@@ -65,10 +65,10 @@ class HouzierVectorizer(object):
                 training_sentences and 9362 is a vocabulary.This is called
                 document term matri
                 """
-
+                
                 self.training_sentiment_tags, self.training_sentences = zip(*sentiment_sentences_list)
                 self.stemmer = SnowballStemmer("english")
-                self.ngram_range = ngram_range
+                self.ngram_range = [1,  6]
                 self.preprocessor_callable = preprocessor_callable
 
                 return 
@@ -77,6 +77,12 @@ class HouzierVectorizer(object):
 
 
         def count_vectorize(self): 
+                """
+                token_pattern=u'(?u)\\b\\w\\w+\\b' removes single word from the
+                vocabullary
+                """
+                
+                
                 analyzer = CountVectorizer().build_analyzer()
                 preprocessor = CountVectorizer().build_preprocessor()
                 
@@ -94,15 +100,20 @@ class HouzierVectorizer(object):
                 vectorizer = CountVectorizer(preprocessor=preprocess, analyzer=stemmed_words, ngram_range=(1, 6))
                 
                 dtm = vectorizer.fit_transform(self.training_sentences)  # a sparse
-                print "These are some features"
+                #this is a sparse matrix to convert it into dense matrix
+                #use    dt.todense()
+                
                 print sorted(vectorizer.vocabulary_.items(),
                              key=operator.itemgetter(1))
                 
-                print len(vectorizer.vocabulary_)
                 #print vectorizer.get_feature_names()
                 print "shape of the document matrix is rows=%s,columns=%s"%dtm.shape
-                self.dtm = dtm
-                return
+                if use_dense_matrix:
+                        self.dtm = dtm.todense()
+                else:
+                        self.dtm = dtm
+
+                return self.dtm
 
 
         def _cosine_similarity(self):
@@ -142,7 +153,10 @@ class HouzierVectorizer(object):
 
 
 if __name__ == "__main__":
-        cls = SentimentSimilaritySenteceView()
-        cls.run()
+        f = open("sentiment_training_sentences.pickle", "rb")
+        sentiment_sentences = pickle.load(f)
+        cls = HouzierVectorizer(sentiment_sentences[0:10],
+                                PreProcessingText.PreProcessText)
+        cls.count_vectorize()
 
                             
