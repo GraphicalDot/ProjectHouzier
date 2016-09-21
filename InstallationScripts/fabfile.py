@@ -66,7 +66,7 @@ def localhost():
 @task
 def remote():
     env.run = run
-    env.hosts = ['52.66.155.19']
+    env.hosts = ['52.66.85.208']
     env.use_ssh_config = True
     env.user = "ubuntu"
     env.key_filename = "/Users/kaali/Downloads/DataProcessingHouzier.pem"

@@ -14,7 +14,7 @@ class PreProcessText(object):
         @staticmethod
         def process(text):
                 text = PreProcessText.convert_lowercase(text)
-                text = PreProcessText.remove_all_instances(sentence)
+                text = PreProcessText.remove_all_instances(text)
                 text = PreProcessText.remove_and_replace(text)
                 return text
 

@@ -5,13 +5,16 @@ import sys
 import pickle
 import numpy as np
 import os  # for os.path.basename
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
+#If you want ot import on macosx then use frameworkpython function mentioned in
+#bashrc file
+
 from sklearn.manifold import MDS
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 import operator
 from nltk.stem import SnowballStemmer
-
+from sklearn.preprocessing import PolynomialFeatures
 
 
 
@@ -24,11 +27,23 @@ import PreProcessingText
 
 class HouzierVectorizer(object):
 
-        def __init__(self, sentiment_sentences_list, preprocessor_callable,
-                     use_dense_matrix=False): 
+        def __init__(self, sentences, use_dense_matrix=False, enable_print=False): 
                 
             
                 """
+                Args:
+                    sentences: training_sentences 
+                    preprocessor_callable: a function which will preprocess the
+                            text before fetching into the vectorizer, as in to
+                            remove hmtl characters etc
+
+                    use_dense_matrix: By default CountVectorizer spits out
+                            a sparse matrix, To convert it into dense matrix
+                            which is required by sevral agorithms use True
+
+                    enable_print: If you want to print the features count and 
+                            features name while measurin performance use True.
+
                 tags = [
                   "python, tools",
                     "linux, tools, ubuntu",
@@ -63,13 +78,14 @@ class HouzierVectorizer(object):
                 dtm.shape (15581, 9362)
                 So here we have 15581 rows corresponding to 15581
                 training_sentences and 9362 is a vocabulary.This is called
-                document term matri
+                document term matrix
                 """
-                
-                self.training_sentiment_tags, self.training_sentences = zip(*sentiment_sentences_list)
+                self.sentences = sentences
+                self.use_dense_matrix = use_dense_matrix
+                self.enable_print = enable_print
                 self.stemmer = SnowballStemmer("english")
-                self.ngram_range = [1,  6]
-                self.preprocessor_callable = preprocessor_callable
+                self.ngram_range = [1,  3]
+                #self.preprocessor_callable = preprocessor_callable
 
                 return 
 
@@ -83,32 +99,20 @@ class HouzierVectorizer(object):
                 """
                 
                 
-                analyzer = CountVectorizer().build_analyzer()
-                preprocessor = CountVectorizer().build_preprocessor()
                 
+                #vectorizer = CountVectorizer(preprocessor=preprocess, analyzer=stemmed_words, ngram_range=(2, 6))
+                vectorizer = CountVectorizer(ngram_range=(1, 3))
                 
-                def stemmed_words(doc):
-                        return (self.stemmer.stem(w) for w in analyzer(doc))
-                
-
-                def preprocess(docc):
-                        return (self.preprocessor_callable(w) for w in analyzer(doc))
-
-                
-                
-                
-                vectorizer = CountVectorizer(preprocessor=preprocess, analyzer=stemmed_words, ngram_range=(1, 6))
-                
-                dtm = vectorizer.fit_transform(self.training_sentences)  # a sparse
+                dtm = vectorizer.fit_transform(self.sentences)  # a sparse
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
                 
-                print sorted(vectorizer.vocabulary_.items(),
+                if self.enable_print:
+                        print sorted(vectorizer.vocabulary_.items(),
                              key=operator.itemgetter(1))
                 
-                #print vectorizer.get_feature_names()
-                print "shape of the document matrix is rows=%s,columns=%s"%dtm.shape
-                if use_dense_matrix:
+                        print "shape of the document matrix is rows=%s,columns=%s"%dtm.shape
+                if self.use_dense_matrix:
                         self.dtm = dtm.todense()
                 else:
                         self.dtm = dtm
