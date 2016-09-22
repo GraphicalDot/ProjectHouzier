@@ -13,7 +13,7 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-
+from sklearn.svm import SVC 
 
 
 
@@ -33,11 +33,11 @@ class SentimentClassifiers(object):
 
         @staticmethod
         def svm():
-                sentiments, sentences = zip(*TrainingMongoData.sentiment_data_three_categories())
+                sentiments, sentences= zip(*TrainingMongoData.sentiment_data_three_categories()[0:500])
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 #sentences = [PreProcessText.process(sent) for sent in sentences] 
-                vectorize_class = HouzierVectorizer(sentences, False, True)
+                vectorize_class = HouzierVectorizer(sentences, False, False)
                 x_vectorize = vectorize_class.count_vectorize()
 
 
@@ -62,7 +62,26 @@ class SentimentClassifiers(object):
 
                 X_features = combined_features.fit_transform(x_transform.toarray(),
                                                              sentiments)
+            
+                print dir(X_features)
+                print X_features
+                print X_features.shape
                 
+                #http://stackoverflow.com/questions/32934267/feature-union-of-hetereogenous-features
+
+                print "fitting on classifier"
+                classifier = SVC(C=1, kernel="linear", gamma=.0001)
+                classifier.fit(X_features, sentiments)
+
+                ##example to build your own vectorizer 
+                ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
+                from sklearn.feature_extraction.text import CountVectorizer
+                count_vectorizer = CountVectorizer(ngram_range=[1, 3])
+                examples = ['Free Viagra call today!', "I'm going to attend theLinux users group tomorrow."]
+                example_counts = count_vectorizer.transform(examples)
+                example_counts= example_counts.toarray()
+                
+                predictions = classifier.predict(example_counts)
                 return 
          
 

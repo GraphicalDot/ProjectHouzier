@@ -111,7 +111,7 @@ class HouzierVectorizer(object):
                         print sorted(vectorizer.vocabulary_.items(),
                              key=operator.itemgetter(1))
                 
-                        print "shape of the document matrix is rows=%s,columns=%s"%dtm.shape
+                print "shape of the document matrix is rows=%s,columns=%s"%dtm.shape
                 if self.use_dense_matrix:
                         self.dtm = dtm.todense()
                 else:
