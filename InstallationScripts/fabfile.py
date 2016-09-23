@@ -44,6 +44,7 @@ def basic_setup():
         #Dependencies for installating scipy
         env.run("sudo apt-get install -y liblapack-dev libatlas-dev gfortran")
         env.run("sudo apt-get install -y libatlas-base-dev gfortran build-essential g++ libblas-dev")
+        env.run("sudo apt-get install build-essential libssl-dev libffi-dev")
         #Dependicies to install hunpostagger
         env.run("sudo apt-get install -y ocaml-nox")
         env.run("sudo apt-get install -y mercurial")
@@ -64,6 +65,12 @@ def localhost():
     env.hosts = ['localhost']
 
 @task
+def another_localhost():
+    env["user"] = "kaali"
+    env.run = lrun
+    env.hosts = ['192.168.1.2']
+
+@task
 def remote():
     env.run = run
     env.hosts = ['52.66.85.208']
@@ -72,6 +79,21 @@ def remote():
     env.key_filename = "/Users/kaali/Downloads/DataProcessingHouzier.pem"
     env.warn_only = True
     env.port = 22
+
+
+
+@task 
+def install_corenlp_server():
+        Directory = raw_input("Please enter the full path of the directory where you want to install corenlp server: ")
+
+        with cd(Directory):
+                env.run("git clone https://github.com/Wordseer/stanford-corenlp-python.git")
+                env.run("cd stanford-corenlp-python")
+                env.run("wget http://nlp.stanford.edu/software/stanford-corenlp-full-2014-08-27.zip")
+                env.run("unzip stanford-corenlp-full-2014-08-27.zip")
+
+        return 
+
 
 def update_git():
 	"""

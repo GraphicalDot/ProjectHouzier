@@ -14,4 +14,4 @@ from PosTaggers import PosTaggers, PosTaggerDirPath, HunPosModelPath, HunPosTagP
 from PrepareClassifiers import LoadClassifiers
 from NER import NERs
 from NPClustering import NpClustering
-
+from CoreNLPScripts import CoreNLPScripts

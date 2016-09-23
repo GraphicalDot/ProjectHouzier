@@ -1,7 +1,7 @@
 
 #!/usr/bin/env python
 
-
+from os.path import dirname
 from PreProcessingText import PreProcessText
 from Vectorization import HouzierVectorizer
 from Transformation import  HouzierTfIdf
@@ -14,6 +14,16 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC 
+from  CoreNLPScripts import  CoreNLPScripts
+
+
+
+parent = dirname(os.path.abspath(__file__))
+print parent 
+
+def analyse_sentences():
+        pass
+        
 
 
 
@@ -33,7 +43,7 @@ class SentimentClassifiers(object):
 
         @staticmethod
         def svm():
-                sentiments, sentences= zip(*TrainingMongoData.sentiment_data_three_categories()[0:500])
+                sentiments, sentences= zip(*TrainingMongoData.sentiment_data_three_categories()[0:1000])
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 #sentences = [PreProcessText.process(sent) for sent in sentences] 

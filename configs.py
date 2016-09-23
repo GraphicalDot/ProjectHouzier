@@ -1,4 +1,8 @@
 
+
+import jsonrpc
+import pymongo
+
 reviews_data = dict(
         ip = "localhost",
         port = 27017,
@@ -8,6 +12,14 @@ reviews_data = dict(
         users = "ZomatoUsers",
 )
 
+
+
+corenlp_data = dict(
+        ip = "localhost",
+        port = 3456,
+        db = "corenlp",
+        sentiments= "processed_sentiments_data",
+)
 
 
 training_data = dict(
@@ -46,9 +58,11 @@ debug = dict(
 
 
 
-import pymongo
 t_connection = pymongo.MongoClient(training_data["ip"], training_data["port"])
 sentiment_collection = t_connection[training_data["db"]][training_data["sentiment"]]
-
+server = jsonrpc.ServerProxy(jsonrpc.JsonRpc20(),
+                             jsonrpc.TransportTcpIp(addr=(corenlp_data["ip"],
+                                                          corenlp_data["port"]
+                                                          )))
 
 
