@@ -1,7 +1,7 @@
 
 #!/usr/bin/env python
 
-from os.path import dirname
+from os.path import dirname, abspath
 from PreProcessingText import PreProcessText
 from Vectorization import HouzierVectorizer
 from Transformation import  HouzierTfIdf
@@ -18,8 +18,7 @@ from  CoreNLPScripts import  CoreNLPScripts
 
 
 
-parent = dirname(os.path.abspath(__file__))
-print parent 
+parent = dirname(abspath(__file__))
 
 def analyse_sentences():
         pass

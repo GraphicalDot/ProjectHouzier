@@ -84,13 +84,19 @@ def remote():
 
 @task 
 def install_corenlp_server():
-        Directory = raw_input("Please enter the full path of the directory where you want to install corenlp server: ")
+        Directory = raw_input("Please enter the full path of the directory\
+                              where you want to install corenlp server, Plase\
+                              dont slash afterwards : ")
 
         with cd(Directory):
                 env.run("git clone https://github.com/Wordseer/stanford-corenlp-python.git")
-                env.run("cd stanford-corenlp-python")
-                env.run("wget http://nlp.stanford.edu/software/stanford-corenlp-full-2014-08-27.zip")
-                env.run("unzip stanford-corenlp-full-2014-08-27.zip")
+                with cd(stanford-corenlp-python):
+                        env.run("wget http://nlp.stanford.edu/software/stanford-corenlp-full-2014-08-27.zip")
+                        env.run("unzip stanford-corenlp-full-2014-08-27.zip")
+                        env.run("python setup.py install")
+            
+
+
 
         return 
 

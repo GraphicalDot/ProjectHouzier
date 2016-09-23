@@ -3,4 +3,4 @@
 
 
 
-from core_nl_scripts import  CoreNLPScripts
+from core_nlp_scripts import  CoreNLPScripts

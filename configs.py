@@ -1,7 +1,23 @@
 
 
-import jsonrpc
 import pymongo
+import os
+
+class cd:
+    """Context manager for changing the current working directory"""
+    def __init__(self, newPath):
+        self.newPath = os.path.expanduser(newPath)
+
+    def __enter__(self):
+        self.savedPath = os.getcwd()
+        os.chdir(self.newPath)
+
+    def __exit__(self, etype, value, traceback):
+        os.chdir(self.savedPath)
+
+
+
+
 
 reviews_data = dict(
         ip = "localhost",
@@ -19,6 +35,7 @@ corenlp_data = dict(
         port = 3456,
         db = "corenlp",
         sentiments= "processed_sentiments_data",
+        path_jar_files = "/home/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
 )
 
 
@@ -60,9 +77,18 @@ debug = dict(
 
 t_connection = pymongo.MongoClient(training_data["ip"], training_data["port"])
 sentiment_collection = t_connection[training_data["db"]][training_data["sentiment"]]
+
+
+import sys
+sys.path.append(corenlp_data["path_jar_files"])
+import jsonrpc
 server = jsonrpc.ServerProxy(jsonrpc.JsonRpc20(),
                              jsonrpc.TransportTcpIp(addr=(corenlp_data["ip"],
                                                           corenlp_data["port"]
                                                           )))
+
+
+
+
 
 
