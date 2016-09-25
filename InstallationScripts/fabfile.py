@@ -48,10 +48,10 @@ def basic_setup():
         #Dependicies to install hunpostagger
         env.run("sudo apt-get install -y ocaml-nox")
         env.run("sudo apt-get install -y mercurial")
-        env.run("sudo pip install numpy")
-        env.run("sudo  pip install scipy")
-        env.run("sudo pip install scikit-learn")
-        env.run("sudo pip install matplotlib")
+        #env.run("sudo pip install numpy")
+        #env.run("sudo  pip install scipy")
+        #env.run("sudo pip install scikit-learn")
+        #env.run("sudo pip install matplotlib")
 
 
 
@@ -73,6 +73,7 @@ def another_localhost():
 @task
 def remote():
     env.run = run
+    #env.hosts = ['52.66.155.19']
     env.hosts = ['52.66.85.208']
     env.use_ssh_config = True
     env.user = "ubuntu"

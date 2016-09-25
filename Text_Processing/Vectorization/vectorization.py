@@ -21,6 +21,7 @@ from sklearn.preprocessing import PolynomialFeatures
 filename = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(filename)
 import PreProcessingText
+from sklearn.externals import joblib
 #https://dandelion.eu/semantic-text/entity-extraction-demo/
 #http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/
 
@@ -106,7 +107,7 @@ class HouzierVectorizer(object):
                 dtm = vectorizer.fit_transform(self.sentences)  # a sparse
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
-                
+                joblib.dump(vectorizer.vocabulary_, "vectorizer.pkl")
                 if self.enable_print:
                         print sorted(vectorizer.vocabulary_.items(),
                              key=operator.itemgetter(1))
@@ -118,6 +119,10 @@ class HouzierVectorizer(object):
                         self.dtm = dtm
 
                 return self.dtm
+
+        def return_vectorizer(self):
+                return joblib.load("vectorizer.pkl")
+                
 
 
         def _cosine_similarity(self):

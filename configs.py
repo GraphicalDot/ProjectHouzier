@@ -2,6 +2,10 @@
 
 import pymongo
 import os
+from os.path import dirname, abspath
+
+base_dir = dirname(abspath(__file__)) 
+print base_dir
 
 class cd:
     """Context manager for changing the current working directory"""
@@ -34,8 +38,8 @@ corenlp_data = dict(
         ip = "localhost",
         port = 3456,
         db = "corenlp",
-        sentiments= "processed_sentiments_data",
-        path_jar_files = "/home/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
+        sentiment= "sentiment",
+        path_jar_files = "/Users/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
 )
 
 
@@ -77,6 +81,7 @@ debug = dict(
 
 t_connection = pymongo.MongoClient(training_data["ip"], training_data["port"])
 sentiment_collection = t_connection[training_data["db"]][training_data["sentiment"]]
+corenlp_collection = t_connection[corenlp_data["db"]][corenlp_data["sentiment"]]
 
 
 import sys

@@ -7,25 +7,53 @@ from Vectorization import HouzierVectorizer
 from Transformation import  HouzierTfIdf
 from TrainingData.MongoData import TrainingMongoData
 from nltk.stem import SnowballStemmer
-
+from configs import base_dir, 
 from sklearn.decomposition import PCA
-from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC 
+from sklearn.externals import joblib
 from  CoreNLPScripts import  CoreNLPScripts
 
+
+#on mac print option +# to search throught he file
 
 
 parent = dirname(abspath(__file__))
 
-def analyse_sentences():
-        pass
-        
+def analyse_sentences(result):
+        part_of_speech_list = list()
+        for element in result["sentences"][0]["words"]:
+                part_of_speech_list.append((element[0], element[1]["PartOfSpeech"]))
+                
+        sentence = list()
+        for (word, pos) in part_of_speech_list:
+                if pos in ["DT", "NNS", "NNP", "CC"]:
+                        word = "DUMMY"
+                sentence.append(word)
+		
+
+        print " ".join(sentence)
+                    
+        return " ".join(sentence) 
 
 
 
+def transform(sentence):
+		for rel, _, head, word, n in sentence['dependencies']:
+			n = int(n)
+			word_info = sentence['words'][n - 1][1]
+			tag = word_info['PartOfSpeech']
+			lemma = word_info['Lemma']
+			if rel == 'root':
+					#NLTK expects that the root relation is labelled as ROOT!
+					rel = 'ROOT'
+			# Hack: Return values we don't know as '_'.
+			# Also, consider tag and ctag to be equal.
+			# n is used to sort words as they appear in the sentence.
+			yield n, '_', word, lemma, tag, tag, '_', head, rel, '_', '_'
 
 class SentimentClassifiers(object): 
 
@@ -41,56 +69,72 @@ class SentimentClassifiers(object):
 
 
         @staticmethod
-        def svm():
-                sentiments, sentences= zip(*TrainingMongoData.sentiment_data_three_categories()[0:1000])
-                sentences = SentimentClassifiers.snowball_stemmer(sentences)
-                sentences = SentimentClassifiers.pre_process_text(sentences)
-                #sentences = [PreProcessText.process(sent) for sent in sentences] 
-                vectorize_class = HouzierVectorizer(sentences, False, False)
-                x_vectorize = vectorize_class.count_vectorize()
-
-
-                tfidf = TfidfTransformer(norm="l2", sublinear_tf=True)
-                
-                x_transform = tfidf.fit_transform(x_vectorize)
+        def svm(sentiment_data, file_name_classifier):
                 """
-
-
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
                 """
+                sentiments, sentences=zip(*sentiment_data)
+                sentences = SentimentClassifiers.snowball_stemmer(sentences)
+                sentences = SentimentClassifiers.pre_process_text(sentences)
+                vectorize_class = HouzierVectorizer(sentences, False, False)
+                
+                
+                ##getting features list
+                x_vectorize = vectorize_class.count_vectorize()
+                tfidf = TfidfTransformer(norm="l2", sublinear_tf=True)
 
+                ##convert them into term frequency
+                x_transform = tfidf.fit_transform(x_vectorize)
+
+
+                print "Feature after vectorization of the data [%s, %s]"%x_transform.shape
+                ##Going for feature selection
                 # This dataset is way too high-dimensional. Better do PCA:
-                pca = PCA(n_components=2)
+                pca = PCA()
                 #
-                # # Maybe some original features where good, too?
-                selection = SelectKBest(k=1)
-                #
+                ## Maybe some original features where good, too?
+                ##this will select features basec on chi2 test 
+                selection = SelectKBest(chi2, k=15)
                 combined_features = FeatureUnion([("pca", pca), ("univ_select",
                                                                  selection)])
 
+
                 X_features = combined_features.fit_transform(x_transform.toarray(),
                                                              sentiments)
-            
-                print dir(X_features)
-                print X_features
-                print X_features.shape
-                
+
+
+                print "Feature after feature slection with pca and selectkbest\
+                    of the data [%s, %s]"%X_features.shape
+
+               
                 #http://stackoverflow.com/questions/32934267/feature-union-of-hetereogenous-features
 
-                print "fitting on classifier"
                 classifier = SVC(C=1, kernel="linear", gamma=.0001)
                 classifier.fit(X_features, sentiments)
+                joblib.dump(classifier, file_name_classifier)
 
                 ##example to build your own vectorizer 
                 ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
                 from sklearn.feature_extraction.text import CountVectorizer
-                count_vectorizer = CountVectorizer(ngram_range=[1, 3])
+                #count_vectorizer = CountVectorizer()
                 examples = ['Free Viagra call today!', "I'm going to attend theLinux users group tomorrow."]
-                example_counts = count_vectorizer.transform(examples)
-                example_counts= example_counts.toarray()
+                #example_counts= example_counts.toarray()
+                vocabulary_to_load = vectorize_class.return_vectorizer()
+                #vectorize_class = HouzierVectorizer(examples, True, False)
+                #x_vectorize = vectorize_class.count_vectorize()
+                loaded_vectorizer= CountVectorizer(vocabulary=vocabulary_to_load) 
+                example_counts = loaded_vectorizer.transform(examples)
+
                 
-                predictions = classifier.predict(example_counts)
+                print example_counts, example_counts.shape 
+
+                f = combined_features.transform(example_counts.toarray())
+                print f.shape
+
+            
+                predictions = classifier.predict(f)
+                print predictions 
                 return 
          
 
@@ -103,7 +147,10 @@ class SubCategoryClassifiers(object):
 
 
 if __name__ == "__main__":
-        SentimentClassifiers.svm()
+            SentimentClassifiers.svm(TrainingMongoData.sentiment_data_three_categories(),
+                                     "svm_linear_kernel")
+            SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
+                                     "svm_linear_kernel_corenlp_data")
 
 
 

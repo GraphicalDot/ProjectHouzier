@@ -4,6 +4,9 @@ import jsonrpc
 from simplejson import loads
 import pprint 
 import blessings
+from nltk.parse import DependencyGraph
+import json 
+
 
 terminal = blessings.Terminal()
 
@@ -59,6 +62,12 @@ class CoreNLPScripts(object):
                     print "text %s"%result
                     print terminal.green(pprint.pprint(result))
                     return result
+
+
+
+        
+
+
 
 
 
