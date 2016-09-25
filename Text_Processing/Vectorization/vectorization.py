@@ -28,7 +28,7 @@ from sklearn.externals import joblib
 
 class HouzierVectorizer(object):
 
-        def __init__(self, sentences, use_dense_matrix=False, enable_print=False): 
+        def __init__(self, sentences, file_name_vectorizer, use_dense_matrix=False, enable_print=False): 
                 
             
                 """
@@ -82,6 +82,7 @@ class HouzierVectorizer(object):
                 document term matrix
                 """
                 self.sentences = sentences
+                self.file_name_vectorizer = file_name_vectorizer
                 self.use_dense_matrix = use_dense_matrix
                 self.enable_print = enable_print
                 self.stemmer = SnowballStemmer("english")
@@ -107,7 +108,7 @@ class HouzierVectorizer(object):
                 dtm = vectorizer.fit_transform(self.sentences)  # a sparse
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
-                joblib.dump(vectorizer.vocabulary_, "vectorizer.pkl")
+                joblib.dump(vectorizer.vocabulary_, self.file_name_vectorizer)
                 if self.enable_print:
                         print sorted(vectorizer.vocabulary_.items(),
                              key=operator.itemgetter(1))
@@ -121,7 +122,7 @@ class HouzierVectorizer(object):
                 return self.dtm
 
         def return_vectorizer(self):
-                return joblib.load("vectorizer.pkl")
+                return joblib.load(self.file_name_vectorizer)
                 
 
 

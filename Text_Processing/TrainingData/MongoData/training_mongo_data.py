@@ -69,7 +69,6 @@ class TrainingMongoData(object):
                               corenlp_collection.find()]
 
                 result = list(set(sentiments))
-                print result
                 return result
 
 

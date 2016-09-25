@@ -7,7 +7,7 @@ from Vectorization import HouzierVectorizer
 from Transformation import  HouzierTfIdf
 from TrainingData.MongoData import TrainingMongoData
 from nltk.stem import SnowballStemmer
-from configs import base_dir, 
+from configs import base_dir, cd
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.pipeline import Pipeline, FeatureUnion
@@ -69,7 +69,7 @@ class SentimentClassifiers(object):
 
 
         @staticmethod
-        def svm(sentiment_data, file_name_classifier):
+        def svm(sentiment_data, file_name_classifier, file_name_vectorizer):
                 """
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
@@ -77,7 +77,8 @@ class SentimentClassifiers(object):
                 sentiments, sentences=zip(*sentiment_data)
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
-                vectorize_class = HouzierVectorizer(sentences, False, False)
+                vectorize_class = HouzierVectorizer(sentences,
+                                                    file_name_vectorizer, False, False)
                 
                 
                 ##getting features list
@@ -112,7 +113,8 @@ class SentimentClassifiers(object):
 
                 classifier = SVC(C=1, kernel="linear", gamma=.0001)
                 classifier.fit(X_features, sentiments)
-                joblib.dump(classifier, file_name_classifier)
+                with cd("%s/CompiledModels"%base_dir):
+                        joblib.dump(classifier, file_name_classifier)
 
                 ##example to build your own vectorizer 
                 ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
@@ -147,10 +149,12 @@ class SubCategoryClassifiers(object):
 
 
 if __name__ == "__main__":
-            SentimentClassifiers.svm(TrainingMongoData.sentiment_data_three_categories(),
-                                     "svm_linear_kernel")
-            SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
-                                     "svm_linear_kernel_corenlp_data")
+    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_three_categories()[0:500],
+                                     "svm_linear_kernel",
+                                     "linear_kernel_vectorizer.pkl")
+    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis()[0:500],
+                                     "svm_linear_kernel_corenlp_data",
+                                     "linear_kernel_vetorizer_corenlp.pkl")
 
 
 
