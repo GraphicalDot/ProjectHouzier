@@ -113,7 +113,7 @@ class SentimentClassifiers(object):
 
                 classifier = SVC(C=1, kernel="linear", gamma=.0001)
                 classifier.fit(X_features, sentiments)
-                with cd("%s/CompiledModels"%base_dir):
+                with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
                         joblib.dump(classifier, file_name_classifier)
 
                 ##example to build your own vectorizer 
@@ -149,10 +149,10 @@ class SubCategoryClassifiers(object):
 
 
 if __name__ == "__main__":
-    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_three_categories()[0:500],
+    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_three_categories(),
                                      "svm_linear_kernel",
                                      "linear_kernel_vectorizer.pkl")
-    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis()[0:500],
+    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
                                      "svm_linear_kernel_corenlp_data",
                                      "linear_kernel_vetorizer_corenlp.pkl")
 
