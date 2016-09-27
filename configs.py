@@ -6,6 +6,14 @@ from os.path import dirname, abspath
 
 base_dir = dirname(abspath(__file__)) 
 print base_dir
+import platform 
+
+
+if platform.system() == "Darwin":
+        path_jar_files = "/Users/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
+else:
+        path_jar_files = "/home/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
+
 
 class cd:
     """Context manager for changing the current working directory"""
@@ -35,16 +43,16 @@ reviews_data = dict(
 
 
 corenlp_data = dict(
-        ip = "192.168.1.3",
+        ip = "localhost",
         port = 3456,
         db = "corenlp",
         sentiment= "sentiment",
-        path_jar_files = "/home/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
+        path_jar_files = path_jar_files
 )
 
 
 training_data = dict(
-        ip = "192.168.1.3",
+        ip = "localhost",
         port = 27017,
         db  = "training_data",
         sentiment = "training_sentiment_collection",
