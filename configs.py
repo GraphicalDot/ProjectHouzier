@@ -35,16 +35,16 @@ reviews_data = dict(
 
 
 corenlp_data = dict(
-        ip = "localhost",
+        ip = "192.168.1.3",
         port = 3456,
         db = "corenlp",
         sentiment= "sentiment",
-        path_jar_files = "/Users/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
+        path_jar_files = "/home/kaali/Programs/Python/ProjectHouzier/stanford-corenlp-python"
 )
 
 
 training_data = dict(
-        ip = "localhost",
+        ip = "192.168.1.3",
         port = 27017,
         db  = "training_data",
         sentiment = "training_sentiment_collection",

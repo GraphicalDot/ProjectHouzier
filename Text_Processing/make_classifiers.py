@@ -1,5 +1,5 @@
 
-#!/usr/bin/env python
+#!/usr/bin/pypy
 
 from os.path import dirname, abspath
 from PreProcessingText import PreProcessText
@@ -8,7 +8,7 @@ from Transformation import  HouzierTfIdf
 from TrainingData.MongoData import TrainingMongoData
 from nltk.stem import SnowballStemmer
 from configs import base_dir, cd
-from sklearn.decomposition import PCA, IncrementalPCA
+from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,8 +16,8 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.svm import SVC 
 from sklearn.externals import joblib
 from  CoreNLPScripts import  CoreNLPScripts
-
-
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
+from sklearn.multiclass import OneVsRestClassifier
 #on mac print option +# to search throught he file
 
 
@@ -69,12 +69,12 @@ class SentimentClassifiers(object):
 
 
         @staticmethod
-        def svm_without_feature_selection(sentiment_data, file_name_classifier, file_name_vectorizer):
+        def svm_bagclassifier(sentiment_data, file_name_classifier, file_name_vectorizer):
                 """
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
                 """
-                sentiments, sentences=zip(*sentiment_data)
+                sentiments, sentences=zip(*sentiment_data[0:1000])
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -111,11 +111,24 @@ class SentimentClassifiers(object):
                
                 #http://stackoverflow.com/questions/32934267/feature-union-of-hetereogenous-features
 
-                classifier = SVC(C=1, kernel="linear", gamma=.0001)
+                #clf = SVC(C=1, kernel="linear", gamma=.001, probability=True, class_weight='auto')
+                
+                n_estimators = 20
+                classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear',
+                                                            probability=True,
+                                                            class_weight='auto'),
+                                                        max_samples=1.0/n_estimators,
+                                                        n_estimators=n_estimators,
+                                                 n_jobs=-1, bootstrap=False))
+                
+                import numpy as np 
                 classifier.fit(X_features, sentiments)
+
+                print classifier.classes_
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
                         joblib.dump(classifier, file_name_classifier)
 
+                print "Storing Classifier with joblib"
                 ##example to build your own vectorizer 
                 ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
                 from sklearn.feature_extraction.text import CountVectorizer
@@ -125,6 +138,7 @@ class SentimentClassifiers(object):
                 vocabulary_to_load = vectorize_class.return_vectorizer()
                 #vectorize_class = HouzierVectorizer(examples, True, False)
                 #x_vectorize = vectorize_class.count_vectorize()
+                
                 loaded_vectorizer= CountVectorizer(vocabulary=vocabulary_to_load) 
                 example_counts = loaded_vectorizer.transform(examples)
 
@@ -134,11 +148,22 @@ class SentimentClassifiers(object):
                 f = combined_features.transform(example_counts.toarray())
                 print f.shape
 
-            
+                #predictions = classifier.predict(f)
                 predictions = classifier.predict(f)
-                print predictions 
+                for sent, tag in zip(examples, predictions):
+                                     print sent, tag
                 return 
          
+
+        @staticmethod
+        def print_report():
+                expected = y
+                predicted = model.predict(X)
+                # summarize the fit of the model
+                print(metrics.classification_report(expected, predicted))
+                print(metrics.confusion_matrix(expected, predicted))
+                return 
+
 
         @staticmethod
         def svm(sentiment_data, file_name_classifier, file_name_vectorizer):
@@ -146,7 +171,7 @@ class SentimentClassifiers(object):
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
                 """
-                sentiments, sentences=zip(*sentiment_data[0:1500])
+                sentiments, sentences=zip(*sentiment_data[0:3000])
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -209,7 +234,8 @@ class SentimentClassifiers(object):
 
             
                 predictions = classifier.predict(f)
-                print predictions 
+                for sent, tag in zip(examples, predictions):
+                                     print sent, tag
                 return 
          
 
@@ -222,7 +248,7 @@ class SubCategoryClassifiers(object):
 
 
 if __name__ == "__main__":
-    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_three_categories(),
+    SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
                                      "svm_linear_kernel",
                                      "linear_kernel_vectorizer.pkl")
     SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
