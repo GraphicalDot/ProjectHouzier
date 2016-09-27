@@ -19,7 +19,9 @@ from  CoreNLPScripts import  CoreNLPScripts
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from sklearn.multiclass import OneVsRestClassifier
 #on mac print option +# to search throught he file
-
+from sklearn import preprocessing
+import warnings
+warnings.filterwarnings("ignore")
 
 parent = dirname(abspath(__file__))
 
@@ -74,7 +76,7 @@ class SentimentClassifiers(object):
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
                 """
-                sentiments, sentences=zip(*sentiment_data[0:1000])
+                sentiments, sentences=zip(*sentiment_data)
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -114,12 +116,13 @@ class SentimentClassifiers(object):
                 #clf = SVC(C=1, kernel="linear", gamma=.001, probability=True, class_weight='auto')
                 
                 n_estimators = 20
-                classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear',
-                                                            probability=True,
-                                                            class_weight='auto'),
+                classifier = BaggingClassifier(SVC(kernel='linear',
+                                                            gamma=.001, 
+                                                            class_weight="balanced"),
                                                         max_samples=1.0/n_estimators,
                                                         n_estimators=n_estimators,
-                                                 n_jobs=-1, bootstrap=False))
+                                                                    n_jobs=-1, 
+                                                                   bootstrap=False)
                 
                 import numpy as np 
                 classifier.fit(X_features, sentiments)
@@ -133,7 +136,8 @@ class SentimentClassifiers(object):
                 ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
                 from sklearn.feature_extraction.text import CountVectorizer
                 #count_vectorizer = CountVectorizer()
-                examples = ['Free Viagra call today!', "I'm going to attend theLinux users group tomorrow."]
+                examples = ['Free Viagra call today!', "I am dissapointed i \
+                            you", "i am not good", "I'm going to attend theLinux users group tomorrow."]
                 #example_counts= example_counts.toarray()
                 vocabulary_to_load = vectorize_class.return_vectorizer()
                 #vectorize_class = HouzierVectorizer(examples, True, False)
@@ -148,6 +152,7 @@ class SentimentClassifiers(object):
                 f = combined_features.transform(example_counts.toarray())
                 print f.shape
 
+                print dir(f)
                 #predictions = classifier.predict(f)
                 predictions = classifier.predict(f)
                 for sent, tag in zip(examples, predictions):
@@ -251,7 +256,7 @@ if __name__ == "__main__":
     SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
                                      "svm_linear_kernel",
                                      "linear_kernel_vectorizer.pkl")
-    SentimentClassifiers.svm(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
+    SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
                                      "svm_linear_kernel_corenlp_data",
                                      "linear_kernel_vetorizer_corenlp.pkl")
 
