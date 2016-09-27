@@ -8,7 +8,7 @@ from Transformation import  HouzierTfIdf
 from TrainingData.MongoData import TrainingMongoData
 from nltk.stem import SnowballStemmer
 from configs import base_dir, cd
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, RandomizedPCA, NMF, KernelPCA
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -76,7 +76,9 @@ class SentimentClassifiers(object):
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
                 """
-                sentiments, sentences=zip(*sentiment_data)
+                import time 
+                start = time.time()
+                sentiments, sentences=zip(*sentiment_data[0: 1000])
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -90,21 +92,28 @@ class SentimentClassifiers(object):
                 ##convert them into term frequency
                 x_transform = tfidf.fit_transform(x_vectorize)
 
-
+                X_normalized = preprocessing.normalize(x_transform.toarray(), norm='l2')
                 print "Feature after vectorization of the data [%s, %s]"%x_transform.shape
                 ##Going for feature selection
                 # This dataset is way too high-dimensional. Better do PCA:
-                pca = PCA()
+                #pca = PCA()
+                pca = KernelPCA(kernel="linear")
+                #pca = RandomizedPCA()
+                #pca = NMF()
                 #
                 ## Maybe some original features where good, too?
                 ##this will select features basec on chi2 test 
-                selection = SelectKBest(chi2, k=15)
+                
+                selection = SelectKBest(chi2, k=200)
                 combined_features = FeatureUnion([("pca", pca), ("univ_select",
                                                                  selection)])
 
 
-                X_features = combined_features.fit_transform(x_transform.toarray(),
-                                                             sentiments)
+                X_features = combined_features.fit_transform(X_normalized,
+                                                           sentiments)
+
+
+                #X_pca = pca.fit_transform(x_transform)
 
 
                 print "Feature after feature slection with pca and selectkbest\
@@ -116,13 +125,21 @@ class SentimentClassifiers(object):
                 #clf = SVC(C=1, kernel="linear", gamma=.001, probability=True, class_weight='auto')
                 
                 n_estimators = 20
-                classifier = BaggingClassifier(SVC(kernel='linear',
-                                                            gamma=.001, 
-                                                            class_weight="balanced"),
-                                                        max_samples=1.0/n_estimators,
+                classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear', 
+                                                            C= 1, 
+                                                            gamma="auto", 
+                                                            probability=True, 
+                                                            decision_function_shape="ovr",
+                                                            class_weight="balanced",
+                                                                       ),
+                                                        max_samples=1.0,
+                                                        max_features= 1.0, 
+                                                        n_jobs=-1, 
+                                                        verbose=True, 
                                                         n_estimators=n_estimators,
-                                                                    n_jobs=-1, 
-                                                                   bootstrap=False)
+                                                                   bootstrap=False))
+                
+                
                 
                 import numpy as np 
                 classifier.fit(X_features, sentiments)
@@ -136,8 +153,14 @@ class SentimentClassifiers(object):
                 ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
                 from sklearn.feature_extraction.text import CountVectorizer
                 #count_vectorizer = CountVectorizer()
-                examples = ['Free Viagra call today!', "I am dissapointed i \
-                            you", "i am not good", "I'm going to attend theLinux users group tomorrow."]
+                examples_negative = ['Free Viagra call today!', "I am dissapointed in you", "i am not good"] 
+                examples_neutral = ["I dont know", "Sun rises in the east", "I'm going to attend theLinux users group tomorrow."]
+                examples_positive = ["hey there, I am too good to be true", "An Awesome man", "A beautiful beautiful lady"]
+                
+                
+                examples = examples_positive + examples_negative + examples_neutral
+
+
                 #example_counts= example_counts.toarray()
                 vocabulary_to_load = vectorize_class.return_vectorizer()
                 #vectorize_class = HouzierVectorizer(examples, True, False)
@@ -150,13 +173,14 @@ class SentimentClassifiers(object):
                 print example_counts, example_counts.shape 
 
                 f = combined_features.transform(example_counts.toarray())
-                print f.shape
 
-                print dir(f)
                 #predictions = classifier.predict(f)
                 predictions = classifier.predict(f)
                 for sent, tag in zip(examples, predictions):
                                      print sent, tag
+                
+                
+                print time.time() -start
                 return 
          
 
@@ -232,10 +256,8 @@ class SentimentClassifiers(object):
                 example_counts = loaded_vectorizer.transform(examples)
 
                 
-                print example_counts, example_counts.shape 
 
                 f = combined_features.transform(example_counts.toarray())
-                print f.shape
 
             
                 predictions = classifier.predict(f)
