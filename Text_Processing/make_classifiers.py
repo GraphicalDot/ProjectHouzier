@@ -174,10 +174,10 @@ class SentimentClassifiers(object):
 
                 f = combined_features.transform(example_counts.toarray())
 
-                #predictions = classifier.predict(f)
                 predictions = classifier.predict(f)
-                for sent, tag in zip(examples, predictions):
-                                     print sent, tag
+                predict_probabilities = classifier.predict_prob(f)
+                for sent, prob, tag in zip(examples, predict_prob, predictions):
+                                     print sent, prob, tag
                 
                 
                 print time.time() -start

@@ -64,7 +64,7 @@ class TrainingMongoData(object):
                                 sentence.append(word)
                         return " ".join(sentence)
                     
-                sentiments = [(post.get("sentiment"),
+                sentiments = [(post.get("sentiment").split("-")[-1],
                                each_sentences(post.get("parsed"))) for post in
                               corenlp_collection.find()]
 
