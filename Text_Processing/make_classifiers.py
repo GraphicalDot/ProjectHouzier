@@ -78,7 +78,7 @@ class SentimentClassifiers(object):
                 """
                 import time 
                 start = time.time()
-                sentiments, sentences=zip(*sentiment_data[0: 1000])
+                sentiments, sentences=zip(*sentiment_data[0: 500])
                 sentences = SentimentClassifiers.snowball_stemmer(sentences)
                 sentences = SentimentClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -175,8 +175,8 @@ class SentimentClassifiers(object):
                 f = combined_features.transform(example_counts.toarray())
 
                 predictions = classifier.predict(f)
-                predict_probabilities = classifier.predict_prob(f)
-                for sent, prob, tag in zip(examples, predict_prob, predictions):
+                predict_probabilities = classifier.predict_proba(f)
+                for sent, prob, tag in zip(examples, predict_probabilities, predictions):
                                      print sent, prob, tag
                 
                 
@@ -194,77 +194,6 @@ class SentimentClassifiers(object):
                 return 
 
 
-        @staticmethod
-        def svm(sentiment_data, file_name_classifier, file_name_vectorizer):
-                """
-                vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
-                X_train = vectorizer.fit_transform(sentences)
-                """
-                sentiments, sentences=zip(*sentiment_data[0:3000])
-                sentences = SentimentClassifiers.snowball_stemmer(sentences)
-                sentences = SentimentClassifiers.pre_process_text(sentences)
-                vectorize_class = HouzierVectorizer(sentences,
-                                                    file_name_vectorizer, False, False)
-                
-                
-                ##getting features list
-                x_vectorize = vectorize_class.count_vectorize()
-                tfidf = TfidfTransformer(norm="l2", sublinear_tf=True)
-
-                ##convert them into term frequency
-                x_transform = tfidf.fit_transform(x_vectorize)
-
-
-                print "Feature after vectorization of the data [%s, %s]"%x_transform.shape
-                ##Going for feature selection
-                # This dataset is way too high-dimensional. Better do PCA:
-                pca = PCA(whiten=True)
-                #
-                ## Maybe some original features where good, too?
-                ##this will select features basec on chi2 test 
-                selection = SelectKBest(chi2, k="all")
-                combined_features = FeatureUnion([("pca", pca), ("univ_select",
-                                                                 selection)])
-
-
-                X_features = combined_features.fit_transform(x_transform.toarray(),
-                                                             sentiments)
-
-
-                print "Feature after feature slection with pca and selectkbest\
-                    of the data [%s, %s]"%X_features.shape
-
-               
-                #http://stackoverflow.com/questions/32934267/feature-union-of-hetereogenous-features
-
-                classifier = SVC(C=1, kernel="linear", gamma=.0001)
-                classifier.fit(X_features, sentiments)
-                with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
-                        joblib.dump(classifier, file_name_classifier)
-
-                ##example to build your own vectorizer 
-                ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
-                from sklearn.feature_extraction.text import CountVectorizer
-                #count_vectorizer = CountVectorizer()
-                examples = ['Free Viagra call today!', "I am dissapointed i \
-                            you", "i am not good", "I'm going to attend theLinux users group tomorrow."]
-                #example_counts= example_counts.toarray()
-                vocabulary_to_load = vectorize_class.return_vectorizer()
-                #vectorize_class = HouzierVectorizer(examples, True, False)
-                #x_vectorize = vectorize_class.count_vectorize()
-                loaded_vectorizer= CountVectorizer(vocabulary=vocabulary_to_load) 
-                example_counts = loaded_vectorizer.transform(examples)
-
-                
-
-                f = combined_features.transform(example_counts.toarray())
-
-            
-                predictions = classifier.predict(f)
-                for sent, tag in zip(examples, predictions):
-                                     print sent, tag
-                return 
-         
 
 
 
