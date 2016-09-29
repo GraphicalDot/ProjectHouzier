@@ -3,12 +3,13 @@
 from os.path import dirname, abspath 
 import sys
 import pymongo
-
+import random
+import blessings
 directory = dirname(abspath(__file__))
 root_path = dirname(dirname(dirname(directory)))
 
 sys.path.append(root_path)
-from configs import sentiment_collection, corenlp_collection 
+from configs import sentiment_collection, corenlp_collection, tag_collection 
 
 
 class TrainingMongoData(object):
@@ -71,10 +72,76 @@ class TrainingMongoData(object):
                 result = list(set(sentiments))
                 return result
 
+        @staticmethod
+        def tag_data(if_all=False):
+                """
+                returns a list of the form (sentiment, sentence)
+                only have three categories positive, neutral, negative 
+                if_all = True, 
+                    return all sentences belonging to tags
+                if_all=False:
+                    return at most 1500 snetences for particular category
+
+
+                Returns:
+                    A list of the tuples which will be in the form 
+                        (tag, sentence)
+                """
+                terminal = blessings.Terminal()
+                print terminal.green("length of the documents in tag_collection\
+                                     %s"%tag_collection.count())
+
+                tags = [u'cuisine', u'service', u'food', u'menu', u'overall',
+                  u'cost', u'place', u'ambience', u'null']
+                
+                tag_sentences = list(set([(post.get("tag"),
+                                             post.get("sentence")) for post in
+                                          tag_collection.find()]))
+
+
+
+                def return_sentences_category(tag_name, sentences):
+                        __list = list()
+                        for (name, sentence) in sentences:
+                                if tag_name == name:
+                                        __list.append((tag_name, sentence))
+                        
+                        print terminal.green("Length of total list for %s is %s"%(tag_name, len(__list)))
+                        for i in range(50):
+                                random.shuffle(__list)
+                        
+                        if len(__list) > 1000:
+                                training_data = __list[0: 1000]
+                                test_data = __list[1000: 1050]
+
+                        else:
+                                training_data = __list[0: len(__list) -20]
+                                test_data = __list[len(__list)-20 : ]
+                        
+                        return (training_data, test_data)
+
+                all_training_data = list()
+                all_test_data = list()
+
+                for tag_name in tags:
+                            training_data, test_data= return_sentences_category(tag_name, tag_sentences)
+                            all_training_data.extend(training_data)
+                            all_test_data.extend(test_data)
+
+                            print terminal.green("Tag-Name is %s"%tag_name)
+                            print terminal.green("Length of the training_sentences list is[%s]"%len(training_data))
+                            print terminal.green("Length of the training_sentences list is[%s]"%len(test_data))
+                            print "\n\n"
+
+                print "This is the length of the training_list%s"%len(all_training_data)
+                print "This is the length of the test_list%s"%len(all_test_data)
+                return (all_training_data, all_test_data)
+
+
 
 if __name__ == "__main__":
-        cls = TrainingMongoData.sentiment_data_after_corenlp_analysis()
-        print cls
+        #cls = TrainingMongoData.sentiment_data_after_corenlp_analysis()
+        cls = TrainingMongoData.tag_data()
 
 
 

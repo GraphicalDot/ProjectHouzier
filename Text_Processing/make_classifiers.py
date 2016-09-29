@@ -22,6 +22,10 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn import preprocessing
 import warnings
 warnings.filterwarnings("ignore")
+import time 
+import numpy as np
+from sklearn.metrics import accuracy_score
+
 
 parent = dirname(abspath(__file__))
 
@@ -43,22 +47,9 @@ def analyse_sentences(result):
 
 
 
-def transform(sentence):
-		for rel, _, head, word, n in sentence['dependencies']:
-			n = int(n)
-			word_info = sentence['words'][n - 1][1]
-			tag = word_info['PartOfSpeech']
-			lemma = word_info['Lemma']
-			if rel == 'root':
-					#NLTK expects that the root relation is labelled as ROOT!
-					rel = 'ROOT'
-			# Hack: Return values we don't know as '_'.
-			# Also, consider tag and ctag to be equal.
-			# n is used to sort words as they appear in the sentence.
-			yield n, '_', word, lemma, tag, tag, '_', head, rel, '_', '_'
 
-class SentimentClassifiers(object): 
 
+class GeneralMethodsClassifiers(object):
         @staticmethod
         def snowball_stemmer(sentences):
                 stemmer = SnowballStemmer("english")
@@ -68,6 +59,11 @@ class SentimentClassifiers(object):
         @staticmethod 
         def pre_process_text(sentences):
                 return [PreProcessText.process(sent) for sent in sentences]
+
+
+
+
+class SentimentClassifiers(object): 
 
 
         @staticmethod
@@ -141,7 +137,6 @@ class SentimentClassifiers(object):
                 
                 
                 
-                import numpy as np 
                 classifier.fit(X_features, sentiments)
 
                 print classifier.classes_
@@ -197,6 +192,113 @@ class SentimentClassifiers(object):
 
 
 
+class TagClassifiers(object): 
+
+        @staticmethod
+        def svm_bagclassifier(tag_data, file_name_classifier, file_name_vectorizer):
+                """
+                vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
+                X_train = vectorizer.fit_transform(sentences)
+                
+                We have big dataset for tag classification, we cannot use
+                PCA or any other flavour of PCA for the time being because its
+                too heavy on computational resources.
+
+                We just goign to uee selectkbest features which selectes best
+                features from the features coumputed by CountVectorizer
+                """
+
+                training_data, test_data = tag_data
+                print "Length of the training data %s"%len(training_data)
+
+                start = time.time()
+                tags, sentences = zip(*training_data)
+                sentences = GeneralMethodsClassifiers.snowball_stemmer(sentences)
+                sentences = GeneralMethodsClassifiers.pre_process_text(sentences)
+                vectorize_class = HouzierVectorizer(sentences,
+                                                    file_name_vectorizer, False, False)
+                
+                
+                ##getting features list
+                x_vectorize = vectorize_class.count_vectorize()
+                tfidf = TfidfTransformer(norm="l2", sublinear_tf=True)
+
+                ##convert them into term frequency
+                x_transform = tfidf.fit_transform(x_vectorize)
+
+                X_normalized = preprocessing.normalize(x_transform.toarray(), norm='l2')
+                print "Feature after vectorization of the data [%s, %s]"%x_transform.shape
+                selection = SelectKBest(chi2, k=200)
+
+                X_features = selection.fit_transform(X_normalized,
+                                                           tags)
+
+
+                #X_pca = pca.fit_transform(x_transform)
+
+
+                print "Feature after feature slection with pca and selectkbest\
+                    of the data [%s, %s]"%X_features.shape
+
+               
+                #http://stackoverflow.com/questions/32934267/feature-union-of-hetereogenous-features
+
+                #clf = SVC(C=1, kernel="linear", gamma=.001, probability=True, class_weight='auto')
+                
+                n_estimators = 20
+                classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear', 
+                                                            C= 1, 
+                                                            gamma="auto", 
+                                                            probability=True, 
+                                                            decision_function_shape="ovr",
+                                                            class_weight="balanced",
+                                                                       ),
+                                                        max_samples=1.0,
+                                                        max_features= 1.0, 
+                                                        n_jobs=-1, 
+                                                        verbose=True, 
+                                                        n_estimators=n_estimators,
+                                                                   bootstrap=False))
+                
+                
+                
+                classifier.fit(X_features, tags)
+
+                print classifier.classes_
+                with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
+                        joblib.dump(classifier, file_name_classifier)
+
+                print "Storing Classifier with joblib"
+                ##example to build your own vectorizer 
+                ##http://stackoverflow.com/questions/31744519/load-pickled-classifier-data-vocabulary-not-fitted-error
+                from sklearn.feature_extraction.text import CountVectorizer
+                
+
+
+                #example_counts= example_counts.toarray()
+                vocabulary_to_load = vectorize_class.return_vectorizer()
+                #vectorize_class = HouzierVectorizer(examples, True, False)
+                #x_vectorize = vectorize_class.count_vectorize()
+                
+                examples, examples_target = zip(*test_data)
+                loaded_vectorizer= CountVectorizer(vocabulary=vocabulary_to_load) 
+                example_counts = loaded_vectorizer.transform(examples)
+
+                
+                print example_counts, example_counts.shape 
+
+                #f = combined_features.transform(example_counts.toarray())
+                f = selection.transform(example_counts.toarray())
+
+                predictions = classifier.predict(f)
+                predict_probabilities = classifier.predict_proba(f)
+
+                print accuracy_score(examples_target, predictions)
+                
+                print time.time() -start
+                return 
+         
+
 class SubCategoryClassifiers(object):
         pass
 
@@ -204,13 +306,18 @@ class SubCategoryClassifiers(object):
 
 
 if __name__ == "__main__":
-    SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
+        """
+        SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
                                      "svm_linear_kernel",
                                      "linear_kernel_vectorizer.pkl")
-    SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
+        SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
                                      "svm_linear_kernel_corenlp_data",
                                      "linear_kernel_vetorizer_corenlp.pkl")
-
+        """
+        data = TrainingMongoData.tag_data()
+        TagClassifiers.svm_bagclassifier(data,
+                                     "svmlk_tag_classifier",
+                                     "lk_vetorizer_tag.pkl")
 
 
 
