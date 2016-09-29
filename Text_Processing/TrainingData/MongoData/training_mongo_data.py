@@ -40,6 +40,11 @@ class TrainingMongoData(object):
                 neutral = [e for e in result if e[0] == "neutral"] 
                 result = positives[0:3000] + negatives[0: 3000] + neutral[0: 3000]
                 print len(result)
+                for i in range(100):
+                        random.shuffle(result)
+                
+                for element in result:
+                        print element
                 return result 
                 
 

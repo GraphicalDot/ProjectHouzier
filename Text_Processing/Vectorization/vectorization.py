@@ -15,12 +15,18 @@ from sklearn.feature_extraction.text import CountVectorizer
 import operator
 from nltk.stem import SnowballStemmer
 from sklearn.preprocessing import PolynomialFeatures
+from os.path import dirname, abspath 
 
-
-
-filename = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+filename = dirname(dirname(abspath(__file__)))
 sys.path.append(filename)
+print filename 
 import PreProcessingText
+
+sys.path.append(dirname(filename))
+from configs import cd
+
+
+
 from sklearn.externals import joblib
 #https://dandelion.eu/semantic-text/entity-extraction-demo/
 #http://blog.christianperone.com/2011/09/machine-learning-text-feature-extraction-tf-idf-part-i/
@@ -28,7 +34,7 @@ from sklearn.externals import joblib
 
 class HouzierVectorizer(object):
 
-        def __init__(self, sentences, file_name_vectorizer, use_dense_matrix=False, enable_print=False): 
+        def __init__(self, sentences, path, file_name_vectorizer, use_dense_matrix=False, enable_print=False): 
                 
             
                 """
@@ -82,6 +88,7 @@ class HouzierVectorizer(object):
                 document term matrix
                 """
                 self.sentences = sentences
+                self.path = path
                 self.file_name_vectorizer = file_name_vectorizer
                 self.use_dense_matrix = use_dense_matrix
                 self.enable_print = enable_print
@@ -108,7 +115,8 @@ class HouzierVectorizer(object):
                 dtm = vectorizer.fit_transform(self.sentences)  # a sparse
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
-                joblib.dump(vectorizer.vocabulary_, self.file_name_vectorizer)
+                with cd(self.path):
+                        joblib.dump(vectorizer.vocabulary_, self.file_name_vectorizer)
                 if self.enable_print:
                         print sorted(vectorizer.vocabulary_.items(),
                              key=operator.itemgetter(1))
@@ -122,7 +130,10 @@ class HouzierVectorizer(object):
                 return self.dtm
 
         def return_vectorizer(self):
-                return joblib.load(self.file_name_vectorizer)
+                with cd(self.path):
+                        vocabulary = joblib.load(self.file_name_vectorizer)
+                return vocabulary
+
                 
 
 
@@ -161,12 +172,12 @@ class HouzierVectorizer(object):
                 return 
 
 
-
+"""
 if __name__ == "__main__":
         f = open("sentiment_training_sentences.pickle", "rb")
         sentiment_sentences = pickle.load(f)
         cls = HouzierVectorizer(sentiment_sentences[0:10],
                                 PreProcessingText.PreProcessText)
         cls.count_vectorize()
-
+"""
                             

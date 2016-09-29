@@ -67,17 +67,19 @@ class SentimentClassifiers(object):
 
 
         @staticmethod
-        def svm_bagclassifier(sentiment_data, file_name_classifier, file_name_vectorizer):
+        def svm_bagclassifier(sentiment_data, file_name_classifier,
+                              file_name_vectorizer, file_name_features):
                 """
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
                 """
                 import time 
                 start = time.time()
-                sentiments, sentences=zip(*sentiment_data[0: 500])
-                sentences = SentimentClassifiers.snowball_stemmer(sentences)
-                sentences = SentimentClassifiers.pre_process_text(sentences)
+                sentiments, sentences=zip(*sentiment_data[0: 1000])
+                sentences = GeneralMethodsClassifiers.snowball_stemmer(sentences)
+                sentences = GeneralMethodsClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
+                                                    "%s/CompiledModels/SentimentClassifiers"%base_dir,
                                                     file_name_vectorizer, False, False)
                 
                 
@@ -107,6 +109,8 @@ class SentimentClassifiers(object):
 
                 X_features = combined_features.fit_transform(X_normalized,
                                                            sentiments)
+                with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
+                        joblib.dump(combined_features, "combined_features_sentiment")
 
 
                 #X_pca = pca.fit_transform(x_transform)
@@ -167,6 +171,8 @@ class SentimentClassifiers(object):
                 
                 print example_counts, example_counts.shape 
 
+                
+
                 f = combined_features.transform(example_counts.toarray())
 
                 predictions = classifier.predict(f)
@@ -195,7 +201,8 @@ class SentimentClassifiers(object):
 class TagClassifiers(object): 
 
         @staticmethod
-        def svm_bagclassifier(tag_data, file_name_classifier, file_name_vectorizer):
+        def svm_bagclassifier(tag_data, file_name_classifier,
+                              file_name_vectorizer, file_name_features):
                 """
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
@@ -212,10 +219,11 @@ class TagClassifiers(object):
                 print "Length of the training data %s"%len(training_data)
 
                 start = time.time()
-                tags, sentences = zip(*training_data)
+                tags, sentences = zip(*training_data[0: 1000])
                 sentences = GeneralMethodsClassifiers.snowball_stemmer(sentences)
                 sentences = GeneralMethodsClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
+                                                    "%s/CompiledModels/TagClassifiers"%base_dir,
                                                     file_name_vectorizer, False, False)
                 
                 
@@ -232,6 +240,8 @@ class TagClassifiers(object):
 
                 X_features = selection.fit_transform(X_normalized,
                                                            tags)
+                with cd("%s/CompiledModels/TagClassifiers"%base_dir):
+                        joblib.dump(selection, "combined_features_tag")
 
 
                 #X_pca = pca.fit_transform(x_transform)
@@ -265,7 +275,7 @@ class TagClassifiers(object):
                 classifier.fit(X_features, tags)
 
                 print classifier.classes_
-                with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
+                with cd("%s/CompiledModels/TagClassifiers"%base_dir):
                         joblib.dump(classifier, file_name_classifier)
 
                 print "Storing Classifier with joblib"
@@ -306,18 +316,19 @@ class SubCategoryClassifiers(object):
 
 
 if __name__ == "__main__":
-        """
         SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
-                                     "svm_linear_kernel",
-                                     "linear_kernel_vectorizer.pkl")
+                                     "svmlk_sentiment_classifier.pkl",
+                                     "lk_vectorizer_sentiment.pkl", 
+                                        "sentiment_features.pkl")
         SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
-                                     "svm_linear_kernel_corenlp_data",
-                                     "linear_kernel_vetorizer_corenlp.pkl")
-        """
+                                     "svmlk_sentiment_corenlp_classifier.pkl",
+                                     "lk_vectorizer_sentiment_corenlp.pkl", 
+                                    "sentiment_corenlp_features.pkl")
         data = TrainingMongoData.tag_data()
         TagClassifiers.svm_bagclassifier(data,
-                                     "svmlk_tag_classifier",
-                                     "lk_vetorizer_tag.pkl")
+                                     "svmlk_tag_classifier.pkl",
+                                     "lk_vectorizer_tag.pkl",
+                                     "tag_features.pkl")
 
 
 

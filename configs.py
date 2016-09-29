@@ -2,11 +2,14 @@
 
 import pymongo
 import os
-from os.path import dirname, abspath
+from os.path import dirname, abspath, exists
 
-base_dir = dirname(abspath(__file__)) 
+base_dir = dirname(dirname(abspath(__file__)))
 print base_dir
 import platform 
+
+
+
 
 
 if platform.system() == "Darwin":
@@ -27,8 +30,15 @@ class cd:
     def __exit__(self, etype, value, traceback):
         os.chdir(self.savedPath)
 
-
-
+if not exists("%s/CompiledModels"%base_dir):
+        os.makedirs("%s/CompiledModels"%base_dir)
+        with cd("%s/CompiledModels"%base_dir):
+                for _dir in ["SentimentClassifiers", "TagClassifiers",
+                             "FoodClassifiers", "ServiceClassifiers",
+                             "AmbienceClassifiers", "CostClassifiers"]:
+                        print "making %s at path %s"%(_dir, base_dir)
+                        os.makedirs(_dir)
+                
 
 
 reviews_data = dict(
