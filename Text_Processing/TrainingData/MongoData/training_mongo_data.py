@@ -21,7 +21,7 @@ class TrainingMongoData(object):
         
 
         @staticmethod
-        def sentiment_data_three_categories():
+        def sentiment_data_three_categories(if_all=False):
                 """
                 returns a list of the form (sentiment, sentence)
                 only have three categories positive, neutral, negative 
@@ -29,10 +29,19 @@ class TrainingMongoData(object):
             
                 sentiments = [(post.get("sentiment"), post.get("sentence")) for
                               post in sentiment_collection.find()]
-                return [(sentiment.split("-")[-1], sentence) for sentiment, sentence
+                result = [(sentiment.split("-")[-1], sentence) for sentiment, sentence
                   in set(sentiments)]
 
 
+                if if_all:
+                        return result 
+                positives = [e for e in result if e[0] == "positive"] 
+                negatives = [e for e in result if e[0] == "negative"] 
+                neutral = [e for e in result if e[0] == "neutral"] 
+                result = positives[0:3000] + negatives[0: 3000] + neutral[0: 3000]
+                print len(result)
+                return result 
+                
 
         @staticmethod
         def sentiment_data_five_categories():
@@ -71,6 +80,15 @@ class TrainingMongoData(object):
 
                 result = list(set(sentiments))
                 return result
+
+
+
+        @staticmethod
+        def sub_category_data(category_name):
+                pass
+
+
+
 
         @staticmethod
         def tag_data(if_all=False):
@@ -140,8 +158,8 @@ class TrainingMongoData(object):
 
 
 if __name__ == "__main__":
-        #cls = TrainingMongoData.sentiment_data_after_corenlp_analysis()
-        cls = TrainingMongoData.tag_data()
+        cls = TrainingMongoData.sentiment_data_three_categories()
+        #cls = TrainingMongoData.tag_data()
 
 
 

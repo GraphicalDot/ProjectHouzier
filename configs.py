@@ -90,6 +90,10 @@ debug = dict(
 t_connection = pymongo.MongoClient(training_data["ip"], training_data["port"])
 sentiment_collection = t_connection[training_data["db"]][training_data["sentiment"]]
 tag_collection = t_connection[training_data["db"]][training_data["tag"]]
+food_collection = t_connection[training_data["db"]][training_data["food"]]
+service_collection = t_connection[training_data["db"]][training_data["service"]]
+cost_collection = t_connection[training_data["db"]][training_data["cost"]]
+ambience_collection = t_connection[training_data["db"]][training_data["ambience"]]
 corenlp_collection = t_connection[corenlp_data["db"]][corenlp_data["sentiment"]]
 
 
