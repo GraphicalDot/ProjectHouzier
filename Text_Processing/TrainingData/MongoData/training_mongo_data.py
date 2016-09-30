@@ -9,8 +9,9 @@ directory = dirname(abspath(__file__))
 root_path = dirname(dirname(dirname(directory)))
 
 sys.path.append(root_path)
-from configs import sentiment_collection, corenlp_collection, tag_collection 
-
+from configs import sentiment_collection, corenlp_collection, tag_collection, \
+            food_collection, service_collection, ambience_collection,\
+            cost_collection 
 
 class TrainingMongoData(object):
         """
@@ -89,10 +90,72 @@ class TrainingMongoData(object):
 
 
         @staticmethod
-        def sub_category_data(category_name):
-                pass
+        def sub_category_data_food():
+                terminal = blessings.Terminal()
+                print terminal.green("length of the documents in %s\
+                                     %s"%(food_collection, food_collection.count()))
 
+                sentences = list(set([(post.get("sub_tag"),
+                                             post.get("sentence")) for post in
+                                          food_collection.find()]))
 
+                training_data = sentences[0: -50]
+                test_data = sentences[-50:]
+
+                print terminal.green("length of the training set %s"%len(training_data))
+                print terminal.green("length of the test set %s"%len(test_data))
+                return (training_data, test_data)
+        
+        @staticmethod
+        def sub_category_data_service():
+                terminal = blessings.Terminal()
+                print terminal.green("length of the documents in %s\
+                                     %s"%(service_collection, service_collection.count()))
+
+                sentences = list(set([(post.get("sub_tag"),
+                                             post.get("sentence")) for post in
+                                          service_collection.find()]))
+
+                training_data = sentences[0: -50]
+                test_data = sentences[-50:]
+
+                print terminal.green("length of the training set %s"%len(training_data))
+                print terminal.green("length of the test set %s"%len(test_data))
+                return (training_data, test_data)
+
+        @staticmethod
+        def sub_category_data_ambience():
+                terminal = blessings.Terminal()
+                print terminal.green("length of the documents in %s\
+                                     %s"%(ambience_collection, ambience_collection.count()))
+
+                sentences = list(set([(post.get("sub_tag"),
+                                             post.get("sentence")) for post in
+                                          ambience_collection.find()]))
+
+                training_data = sentences[0: -50]
+                test_data = sentences[-50:]
+
+                print terminal.green("length of the training set %s"%len(training_data))
+                print terminal.green("length of the test set %s"%len(test_data))
+                return (training_data, test_data)
+
+        @staticmethod
+        def sub_category_data_cost():
+                terminal = blessings.Terminal()
+                print terminal.green("length of the documents in %s\
+                                     %s"%(cost_collection, cost_collection.count()))
+
+                sentences = list(set([(post.get("sub_tag"),
+                                             post.get("sentence")) for post in
+                                          cost_collection.find()]))
+
+                training_data = sentences[0: -50]
+                test_data = sentences[-50:]
+
+                print terminal.green("length of the training set %s"%len(training_data))
+                print terminal.green("length of the test set %s"%len(test_data))
+                return (training_data, test_data)
 
 
         @staticmethod
@@ -163,8 +226,12 @@ class TrainingMongoData(object):
 
 
 if __name__ == "__main__":
-        cls = TrainingMongoData.sentiment_data_three_categories()
+        #cls = TrainingMongoData.sentiment_data_three_categories()
         #cls = TrainingMongoData.tag_data()
+        cls = TrainingMongoData.sub_category_data_food()
+        cls = TrainingMongoData.sub_category_data_ambience()
+        cls = TrainingMongoData.sub_category_data_service()
+        cls = TrainingMongoData.sub_category_data_cost()
 
 
 

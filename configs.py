@@ -41,6 +41,16 @@ if not exists("%s/CompiledModels"%base_dir):
                 
 
 
+
+
+SentimentClassifiersPath = "%s/CompiledModels/SentimentClassifiers"%base_dir
+TagClassifiersPath = "%s/CompiledModels/TagClassifiers"%base_dir
+FoodClassifiersPath = "%s/CompiledModels/FoodClassifiers"%base_dir
+ServiceClassifiersPath = "%s/CompiledModels/ServiceClassifiers"%base_dir
+AmbienceClassifiersPath = "%s/CompiledModels/AmbienceClassifiers"%base_dir
+CostClassifiersPath = "%s/CompiledModels/CostClassifiers"%base_dir
+
+
 reviews_data = dict(
         ip = "localhost",
         port = 27017,
