@@ -231,7 +231,7 @@ class SentimentClassifiers(object):
                 X_features = combined_features.fit_transform(X_normalized,
                                                            sentiments)
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
-                        joblib.dump(combined_features, "combined_features_sentiment")
+                        joblib.dump(combined_features, file_name_features)
 
 
                 #X_pca = pca.fit_transform(x_transform)
@@ -442,10 +442,6 @@ class AmbienceClassifiers(object):
 
 if __name__ == "__main__":
         """
-        SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
-                                     "svmlk_sentiment_classifier.pkl",
-                                     "lk_vectorizer_sentiment.pkl", 
-                                        "sentiment_features.pkl")
         SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_after_corenlp_analysis(),
                                      "svmlk_sentiment_corenlp_classifier.pkl",
                                      "lk_vectorizer_sentiment_corenlp.pkl", 
@@ -457,6 +453,10 @@ if __name__ == "__main__":
                                      "tag_features.pkl")
 
         """
+        SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
+                                     "svmlk_sentiment_classifier.pkl",
+                                     "lk_vectorizer_sentiment.pkl", 
+                                        "sentiment_features.pkl")
         TagClassifiers.svm_bagclassifier("smvlk_tag_classifier.pkl", 
                                           "lk_vectorizer_cost.pkl", 
                                           "tag_features_pca_selectkbest.pkl", 
