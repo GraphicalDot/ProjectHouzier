@@ -44,8 +44,6 @@ class TrainingMongoData(object):
                 for i in range(100):
                         random.shuffle(result)
                 
-                for element in result:
-                        print element
                 return result 
                 
 

@@ -129,7 +129,9 @@ class GeneralMethodsClassifiers(object):
                 with cd(file_path):
                         joblib.dump(combined_features, file_name_features)
                 """
-                dump(combined_features, open('%s/%s'%(file_path, file_name_features, 'wb'), HIGHEST_PROTOCOL)
+                dump(combined_features, open('%s/%s'%(file_path,
+                                                      file_name_features),
+                                             'wb'), HIGHEST_PROTOCOL)
 
                 print "Feature after feature slection with pca and selectkbest\
                     of the data [%s, %s]"%X_features.shape
@@ -159,7 +161,9 @@ class GeneralMethodsClassifiers(object):
                 with cd(file_path):
                         joblib.dump(classifier, file_name_classifier)
                 """
-                dump(classifier, open('%s/%s'%(file_path, file_name_classifier, 'wb'), HIGHEST_PROTOCOL)
+                dump(classifier, open('%s/%s'%(file_path,
+                                               file_name_classifier),
+                                               'wb'), HIGHEST_PROTOCOL)
                 print "Storing Classifier with joblib"
                 print time.time() -start
                 return 
@@ -187,7 +191,7 @@ class GeneralMethodsClassifiers(object):
                         #classifier = joblib.load(file_name_classifier)
 
                         feature_reduction_class=load(open(file_name_features, 'rb'))
-                        classifier= load(file_name_features, 'rb'))
+                        classifier= load(open(file_name_classifier, 'rb'))
                 
                 reduced_features = feature_reduction_class.transform(sentences_counts.toarray())
 
@@ -213,7 +217,7 @@ class SentimentClassifiers(object):
                 """
                 import time 
                 start = time.time()
-                sentiments, sentences=zip(*sentiment_data[0: 1000])
+                sentiments, sentences=zip(*sentiment_data[0: 500])
                 sentences = GeneralMethodsClassifiers.snowball_stemmer(sentences)
                 sentences = GeneralMethodsClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -247,9 +251,12 @@ class SentimentClassifiers(object):
 
                 X_features = combined_features.fit_transform(X_normalized,
                                                            sentiments)
+                """
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
                         joblib.dump(combined_features, file_name_features)
-
+                """
+                dump(combined_features,
+                     open('%s/%s'%(SentimentClassifiersPath,SentimentFeatureFileName), 'wb'),HIGHEST_PROTOCOL)
 
                 #X_pca = pca.fit_transform(x_transform)
 
@@ -282,8 +289,14 @@ class SentimentClassifiers(object):
                 classifier.fit(X_features, sentiments)
 
                 print classifier.classes_
+                """
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
                         joblib.dump(classifier, file_name_classifier)
+                """
+                dump(file_name_classifier,open('%s/%s'%(SentimentClassifiersPath,
+                                                       SentimentClassifierFileName
+                                                        ),
+                                               'wb'), HIGHEST_PROTOCOL)
 
                 print "Storing Classifier with joblib"
                 ##example to build your own vectorizer 
@@ -491,12 +504,12 @@ if __name__ == "__main__":
                                           FoodFeatureFileName, 
                                           FoodClassifiersPath
                                           )
-        ServiceClassifiers.svm_bagclassifier(ServiceClassifierFileName
+        ServiceClassifiers.svm_bagclassifier(ServiceClassifierFileName,
                                             ServiceVocabularyFileName, 
                                              ServiceFeatureFileName, 
                                             ServiceClassifiersPath)
 
-        AmbienceClassifiers.svm_bagclassifier(AmbienceClassifierFileName
+        AmbienceClassifiers.svm_bagclassifier(AmbienceClassifierFileName,
                                               AmbienceVocabularyFileName,
                                               AmbienceFeatureFileName,
                                               AmbienceClassifiersPath)

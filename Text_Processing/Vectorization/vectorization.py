@@ -123,7 +123,7 @@ class HouzierVectorizer(object):
                 dtm = vectorizer.fit_transform(self.sentences)  # a sparse
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
-                dump(vectorizer.vocabulary_, open(self.file_name_vectorizer, 'wb'), HIGHEST_PROTOCOL)
+                dump(vectorizer.vocabulary_, open("%s/%s"%(self.path, self.file_name_vectorizer), 'wb'), HIGHEST_PROTOCOL)
                 
                 if self.enable_print:
                         print sorted(vectorizer.vocabulary_.items(),
