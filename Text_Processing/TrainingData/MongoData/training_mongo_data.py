@@ -102,6 +102,8 @@ class TrainingMongoData(object):
 
                 print terminal.green("length of the training set %s"%len(training_data))
                 print terminal.green("length of the test set %s"%len(test_data))
+                for i in range(50):
+                            random.shuffle(training_data)
                 return (training_data, test_data)
         
         @staticmethod
@@ -119,6 +121,8 @@ class TrainingMongoData(object):
 
                 print terminal.green("length of the training set %s"%len(training_data))
                 print terminal.green("length of the test set %s"%len(test_data))
+                for i in range(50):
+                            random.shuffle(training_data)
                 return (training_data, test_data)
 
         @staticmethod
@@ -136,6 +140,8 @@ class TrainingMongoData(object):
 
                 print terminal.green("length of the training set %s"%len(training_data))
                 print terminal.green("length of the test set %s"%len(test_data))
+                for i in range(50):
+                            random.shuffle(training_data)
                 return (training_data, test_data)
 
         @staticmethod
@@ -153,6 +159,8 @@ class TrainingMongoData(object):
 
                 print terminal.green("length of the training set %s"%len(training_data))
                 print terminal.green("length of the test set %s"%len(test_data))
+                for i in range(50):
+                            random.shuffle(training_data)
                 return (training_data, test_data)
 
 
@@ -182,17 +190,27 @@ class TrainingMongoData(object):
                                              post.get("sentence")) for post in
                                           tag_collection.find()]))
 
+                
 
 
                 def return_sentences_category(tag_name, sentences):
+                        """
+                        To preserve homogenity, This will be called for each
+                        tag, And then if the tag sentences are lesss than 1000
+                        returns 20 sentences as test sentences and remaining as
+                        training data
+
+                        else:
+                            return all the sentences as training and left ove
+                            50 as test data set
+                        """
+                    
                         __list = list()
                         for (name, sentence) in sentences:
                                 if tag_name == name:
                                         __list.append((tag_name, sentence))
                         
                         print terminal.green("Length of total list for %s is %s"%(tag_name, len(__list)))
-                        for i in range(50):
-                                random.shuffle(__list)
                         
                         if len(__list) > 1000:
                                 training_data = __list[0: 1000]
@@ -216,6 +234,12 @@ class TrainingMongoData(object):
                             print terminal.green("Length of the training_sentences list is[%s]"%len(training_data))
                             print terminal.green("Length of the training_sentences list is[%s]"%len(test_data))
                             print "\n\n"
+                
+                #The training set will have sentences in the order present in
+                #the tags, So it must be shuffles, in case we require a subset
+                #this set, it will have mixture of tall the categories
+                for i in range(50):
+                            random.shuffle(all_training_data)
 
                 print "This is the length of the training_list%s"%len(all_training_data)
                 print "This is the length of the test_list%s"%len(all_test_data)
