@@ -61,6 +61,19 @@ def analyse_sentences(result):
 
 
 
+def store_with_joblib(file_path, _object, file_name):
+        with cd(file_path):
+                joblib.dump(__object, file_name)
+
+        return 
+
+
+def store_with_cPickle(file_path, __object, file_name):
+        dump(__object, open('%s/%s'%(file_path,
+                                    file_name),
+                                'wb'), HIGHEST_PROTOCOL)
+        return 
+
 
 
 class GeneralMethodsClassifiers(object):
@@ -125,13 +138,13 @@ class GeneralMethodsClassifiers(object):
 
                 X_features = combined_features.fit_transform(X_normalized,
                                                            tags)
-                """
                 with cd(file_path):
                         joblib.dump(combined_features, file_name_features)
                 """
                 dump(combined_features, open('%s/%s'%(file_path,
                                                       file_name_features),
                                              'wb'), HIGHEST_PROTOCOL)
+                """
 
                 print "Feature after feature slection with pca and selectkbest\
                     of the data [%s, %s]"%X_features.shape
@@ -139,7 +152,7 @@ class GeneralMethodsClassifiers(object):
                 
                 n_estimators = 20
                 classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear', 
-                                                            C= 1, 
+                                                            C= 1,
                                                             gamma="auto", 
                                                             probability=True, 
                                                             decision_function_shape="ovr",
@@ -148,7 +161,7 @@ class GeneralMethodsClassifiers(object):
                                                         max_samples=1.0,
                                                         max_features= 1.0, 
                                                         n_jobs=-1, 
-                                                        verbose=True, 
+                                                        verbose=3, 
                                                         n_estimators=n_estimators,
                                                                    bootstrap=False))
                 
@@ -157,13 +170,13 @@ class GeneralMethodsClassifiers(object):
                 classifier.fit(X_features, tags)
 
                 print classifier.classes_
-                """
                 with cd(file_path):
                         joblib.dump(classifier, file_name_classifier)
                 """
                 dump(classifier, open('%s/%s'%(file_path,
                                                file_name_classifier),
                                                'wb'), HIGHEST_PROTOCOL)
+                """
                 print "Storing Classifier with joblib"
                 print time.time() -start
                 return 
@@ -187,11 +200,11 @@ class GeneralMethodsClassifiers(object):
                 sentences_counts = loaded_vectorizer.transform(sentences)
 
                 with cd(file_path):
-                        #feature_reduction_class = joblib.load(file_name_features)
-                        #classifier = joblib.load(file_name_classifier)
+                        feature_reduction_class = joblib.load(file_name_features)
+                        classifier = joblib.load(file_name_classifier)
 
-                        feature_reduction_class=load(open(file_name_features, 'rb'))
-                        classifier= load(open(file_name_classifier, 'rb'))
+                        #feature_reduction_class=load(open(file_name_features, 'rb'))
+                        #classifier= load(open(file_name_classifier, 'rb'))
                 
                 reduced_features = feature_reduction_class.transform(sentences_counts.toarray())
 
@@ -217,7 +230,7 @@ class SentimentClassifiers(object):
                 """
                 import time 
                 start = time.time()
-                sentiments, sentences=zip(*sentiment_data[0: 500])
+                sentiments, sentences=zip(*sentiment_data[0: 200])
                 sentences = GeneralMethodsClassifiers.snowball_stemmer(sentences)
                 sentences = GeneralMethodsClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -251,13 +264,13 @@ class SentimentClassifiers(object):
 
                 X_features = combined_features.fit_transform(X_normalized,
                                                            sentiments)
-                """
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
                         joblib.dump(combined_features, file_name_features)
                 """
                 dump(combined_features,
                      open('%s/%s'%(SentimentClassifiersPath,SentimentFeatureFileName), 'wb'),HIGHEST_PROTOCOL)
 
+                """
                 #X_pca = pca.fit_transform(x_transform)
 
 
@@ -280,7 +293,7 @@ class SentimentClassifiers(object):
                                                         max_samples=1.0,
                                                         max_features= 1.0, 
                                                         n_jobs=-1, 
-                                                        verbose=True, 
+                                                        verbose=3, 
                                                         n_estimators=n_estimators,
                                                                    bootstrap=False))
                 
@@ -289,7 +302,6 @@ class SentimentClassifiers(object):
                 classifier.fit(X_features, sentiments)
 
                 print classifier.classes_
-                """
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
                         joblib.dump(classifier, file_name_classifier)
                 """
@@ -297,6 +309,7 @@ class SentimentClassifiers(object):
                                                        SentimentClassifierFileName
                                                         ),
                                                'wb'), HIGHEST_PROTOCOL)
+                """
 
                 print "Storing Classifier with joblib"
                 ##example to build your own vectorizer 

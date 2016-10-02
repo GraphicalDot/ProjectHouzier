@@ -58,23 +58,23 @@ SentimentClassifierFileName = "svmlk_sentiment_classifier.pkl"
 
 TagVocabularyFileName = "lk_vectorizer_tag.pkl"
 TagFeatureFileName = "tag_features_pca_selectkbest.pkl"
-TagClassifierFileName = "smvlk_tag_classifier.pkl"
+TagClassifierFileName = "svmlk_tag_classifier.pkl"
 
 FoodVocabularyFileName = "lk_vectorizer_food.pkl"
 FoodFeatureFileName = "food_features_pca_selectkbest.pkl"
-FoodClassifierFileName = "smvlk_food_classifier.pkl" 
+FoodClassifierFileName = "svmlk_food_classifier.pkl" 
 
 ServiceVocabularyFileName =  "lk_vectorizer_service.pkl"
 ServiceFeatureFileName = "service_features_pca_selectkbest.pkl"
-ServiceClassifierFileName = "smvlk_service_classifier.pkl"
+ServiceClassifierFileName = "svmlk_service_classifier.pkl"
 
 CostVocabularyFileName = "lk_vectorizer_cost.pkl"
 CostFeatureFileName =  "cost_features_pca_selectkbest.pkl"
-CostClassifierFileName = "smvlk_cost_classifier.pkl"
+CostClassifierFileName = "svmlk_cost_classifier.pkl"
 
 AmbienceVocabularyFileName = "lk_vectorizer_ambience.pkl"
 AmbienceFeatureFileName = "ambience_features_pca_selectkbest.pkl"
-AmbienceClassifierFileName = "smvlk_ambience_classifier.pkl"
+AmbienceClassifierFileName = "svmlk_ambience_classifier.pkl"
 
 reviews_data = dict(
         ip = "localhost",

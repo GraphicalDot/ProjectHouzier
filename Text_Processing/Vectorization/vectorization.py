@@ -108,8 +108,6 @@ class HouzierVectorizer(object):
                 token_pattern=u'(?u)\\b\\w\\w+\\b' removes single word from the
                 vocabullary
                 
-                with cd(self.path):
-                        joblib.dump(vectorizer.vocabulary_, self.file_name_vectorizer)
                
                 replacing joblib with cPickle because its too fast as compared
                 to jblib bullshit
@@ -123,7 +121,9 @@ class HouzierVectorizer(object):
                 dtm = vectorizer.fit_transform(self.sentences)  # a sparse
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
-                dump(vectorizer.vocabulary_, open("%s/%s"%(self.path, self.file_name_vectorizer), 'wb'), HIGHEST_PROTOCOL)
+                with cd(self.path):
+                        joblib.dump(vectorizer.vocabulary_, self.file_name_vectorizer)
+                #dump(vectorizer.vocabulary_, open("%s/%s"%(self.path, self.file_name_vectorizer), 'wb'), HIGHEST_PROTOCOL)
                 
                 if self.enable_print:
                         print sorted(vectorizer.vocabulary_.items(),
