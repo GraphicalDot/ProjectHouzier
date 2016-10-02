@@ -32,6 +32,14 @@ from configs import SentimentClassifiersPath, TagClassifiersPath,\
                 AmbienceClassifiersPath, CostClassifiersPath 
 
 
+from configs import SentimentVocabularyFileName, SentimentFeatureFileName, SentimentClassifierFileName
+from configs import TagVocabularyFileName, TagFeatureFileName, TagClassifierFileName
+from configs import FoodVocabularyFileName, FoodFeatureFileName, FoodClassifierFileName
+from configs import ServiceVocabularyFileName, ServiceFeatureFileName, ServiceClassifierFileName
+from configs import CostVocabularyFileName, CostFeatureFileName, CostClassifierFileName
+from configs import AmbienceVocabularyFileName, AmbienceFeatureFileName, AmbienceClassifierFileName
+
+
 
 parent = dirname(abspath(__file__))
 
@@ -454,34 +462,35 @@ if __name__ == "__main__":
 
         """
         SentimentClassifiers.svm_bagclassifier(TrainingMongoData.sentiment_data_three_categories(),
-                                     "svmlk_sentiment_classifier.pkl",
-                                     "lk_vectorizer_sentiment.pkl", 
-                                        "sentiment_features.pkl")
-        TagClassifiers.svm_bagclassifier("smvlk_tag_classifier.pkl", 
-                                          "lk_vectorizer_cost.pkl", 
-                                          "tag_features_pca_selectkbest.pkl", 
-                                        TagClassifiersPath
+                                               SentimentClassifierFileName,
+                                               SentimentVocabularyFileName, 
+                                               SentimentFeatureFileName)
+
+        TagClassifiers.svm_bagclassifier(TagClassifierFileName,
+                                         TagVocabularyFileName, 
+                                         TagFeatureFileName, 
+                                        TagClassifiersPath)
+        
+        CostClassifiers.svm_bagclassifier(
+                                        CostClassifierFileName,
+                                        CostVocabularyFileName, 
+                                        CostFeatureFileName, 
+                                        CostClassifiersPath)
+
+        FoodClassifiers.svm_bagclassifier(FoodClassifierFileName,
+                                          FoodVocabularyFileName, 
+                                          FoodFeatureFileName, 
+                                          FoodClassifiersPath
                                           )
-        CostClassifiers.svm_bagclassifier("smvlk_cost_classifier.pkl", 
-                                          "lk_vectorizer_cost.pkl", 
-                                          "cost_features_pca_selectkbest.pkl", 
-                                        CostClassifiersPath
-                                          )
-        FoodClassifiers.svm_bagclassifier("smvlk_food_classifier.pkl", 
-                                          "lk_vectorizer_food.pkl", 
-                                          "food_features_pca_selectkbest.pkl", 
-                                        CostClassifiersPath
-                                          )
-        ServiceClassifiers.svm_bagclassifier("smvlk_service_classifier.pkl", 
-                                          "lk_vectorizer_service.pkl", 
-                                          "service_features_pca_selectkbest.pkl", 
-                                        ServiceClassifiersPath
-                                          )
-        AmbienceClassifiers.svm_bagclassifier("smvlk_ambience_classifier.pkl", 
-                                          "lk_vectorizer_ambience.pkl", 
-                                          "ambience_features_pca_selectkbest.pkl", 
-                                        AmbienceClassifiersPath
-                                          )
+        ServiceClassifiers.svm_bagclassifier(ServiceClassifierFileName
+                                            ServiceVocabularyFileName, 
+                                             ServiceFeatureFileName, 
+                                            ServiceClassifiersPath)
+
+        AmbienceClassifiers.svm_bagclassifier(AmbienceClassifierFileName
+                                              AmbienceVocabularyFileName,
+                                              AmbienceFeatureFileName,
+                                              AmbienceClassifiersPath)
         
 
 
