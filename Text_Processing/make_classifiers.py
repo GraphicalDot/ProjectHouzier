@@ -25,7 +25,7 @@ warnings.filterwarnings("ignore")
 import time 
 import numpy as np
 from sklearn.metrics import accuracy_score
-
+from cPickle import dump, load, HIGHEST_PROTOCOL
 
 from configs import SentimentClassifiersPath, TagClassifiersPath,\
                 FoodClassifiersPath, ServiceClassifiersPath,\
@@ -125,8 +125,11 @@ class GeneralMethodsClassifiers(object):
 
                 X_features = combined_features.fit_transform(X_normalized,
                                                            tags)
+                """
                 with cd(file_path):
                         joblib.dump(combined_features, file_name_features)
+                """
+                dump(combined_features, open('%s/%s'%(file_path, file_name_features, 'wb'), HIGHEST_PROTOCOL)
 
                 print "Feature after feature slection with pca and selectkbest\
                     of the data [%s, %s]"%X_features.shape
@@ -152,8 +155,11 @@ class GeneralMethodsClassifiers(object):
                 classifier.fit(X_features, tags)
 
                 print classifier.classes_
+                """
                 with cd(file_path):
                         joblib.dump(classifier, file_name_classifier)
+                """
+                dump(classifier, open('%s/%s'%(file_path, file_name_classifier, 'wb'), HIGHEST_PROTOCOL)
                 print "Storing Classifier with joblib"
                 print time.time() -start
                 return 
@@ -177,9 +183,12 @@ class GeneralMethodsClassifiers(object):
                 sentences_counts = loaded_vectorizer.transform(sentences)
 
                 with cd(file_path):
-                        feature_reduction_class = joblib.load(file_name_features)
-                        classifier = joblib.load(file_name_classifier)
+                        #feature_reduction_class = joblib.load(file_name_features)
+                        #classifier = joblib.load(file_name_classifier)
 
+                        feature_reduction_class=load(open(file_name_features, 'rb'))
+                        classifier= load(file_name_features, 'rb'))
+                
                 reduced_features = feature_reduction_class.transform(sentences_counts.toarray())
 
 
@@ -339,7 +348,7 @@ class TagClassifiers(object):
                               file_name_vectorizer, file_name_features,
                               file_path):
                 training_data, test_data = TrainingMongoData.tag_data()
-                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:2000],
+                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:1000],
                                                             file_name_classifier,
                                                             file_name_vectorizer,
                                                             file_name_features,
@@ -363,7 +372,7 @@ class CostClassifiers(object):
                               file_name_vectorizer, file_name_features,
                               file_path):
                 training_data, test_data =  TrainingMongoData.sub_category_data_cost()
-                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:2000],
+                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:1000],
                                                             file_name_classifier,
                                                             file_name_vectorizer,
                                                             file_name_features,
@@ -385,7 +394,7 @@ class FoodClassifiers(object):
                               file_name_vectorizer, file_name_features,
                               file_path):
                 training_data, test_data =  TrainingMongoData.sub_category_data_food()
-                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:2000],
+                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:1000],
                                                             file_name_classifier,
                                                             file_name_vectorizer,
                                                             file_name_features,
@@ -407,7 +416,7 @@ class ServiceClassifiers(object):
                               file_name_vectorizer, file_name_features,
                               file_path):
                 training_data, test_data = TrainingMongoData.sub_category_data_service()
-                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:2000],
+                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0:1000],
                                                             file_name_classifier,
                                                             file_name_vectorizer,
                                                             file_name_features,
@@ -429,7 +438,7 @@ class AmbienceClassifiers(object):
                               file_name_vectorizer, file_name_features,
                               file_path):
                 training_data, test_data =  TrainingMongoData.sub_category_data_ambience()
-                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0: 2000],
+                GeneralMethodsClassifiers.svm_bagclassifier(training_data[0: 1000],
                                                             file_name_classifier,
                                                             file_name_vectorizer,
                                                             file_name_features,
