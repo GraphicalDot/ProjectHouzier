@@ -72,17 +72,33 @@ def add_compression(name, file_name_classifier,
                 with cd("%s/%s"%(file_path, name)):
                         print "Gzipping vectorizer"
                         with gzip.GzipFile(new_file_name_vectorizer, 'wb') as f:
-                                joblib.dump(vectorizer, f, compress=('zlib', 9))
+                                dump(vectorizer, f, HIGHEST_PROTOCOL)
                         print "Gzipping vectorizer Completed"
                         
                         print "Gzipping features"
                         with gzip.GzipFile(new_file_name_features, 'wb') as f:
-                                joblib.dump(feature_reduction_class, f, compress=('zlib', 9))
+                                dump(feature_reduction_class, f, HIGHEST_PROTOCOL)
                         print "Gzipping features Completed"
                         
                         print "Gzipping classifier"
                         with gzip.GzipFile(new_file_name_classifier, 'wb') as f:
-                                joblib.dump(classifier, f,  compress=('zlib', 9))
+                                dump(classifier, f,  HIGHEST_PROTOCOL)
+                        print "Gzipping classifier completed "
+                
+                with cd("%s/%s"%(file_path, name)):
+                        print "Gzipping vectorizer"
+                        with gzip.GzipFile(new_file_name_vectorizer, 'rb') as f:
+                                print load(f)
+                        print "Gzipping vectorizer Completed"
+                        
+                        print "Gzipping features"
+                        with gzip.GzipFile(new_file_name_features, 'rb') as f:
+                                print load(f)
+                        print "Gzipping features Completed"
+                        
+                        print "Gzipping classifier"
+                        with gzip.GzipFile(new_file_name_classifier, 'rb') as f:
+                                print load(f)
                         print "Gzipping classifier completed "
 
 
