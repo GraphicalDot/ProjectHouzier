@@ -1,0 +1,29 @@
+" Press ? for help
+
+.. (up a dir)
+<rojectHouzier/Text_Processing/
+▸ Algortihms/
+▸ CoreNLPScripts/
+▸ CostSubTagsAnalysis/
+▸ FeatureSelection/
+▸ MainAlgorithms/
+▸ NER/
+▸ NounPhrases/
+▸ NPClustering/
+▸ PosTaggers/
+▸ PrepareClassifiers/
+▸ PreProcessingText/
+▸ RepeatedRecommendedAnalysis/
+▸ Sentence_Tokenization/
+▸ TagAnalysis/
+▸ TagClassifiers/
+▸ TrainingData/
+▸ Transformation/
+▸ Vectorization/
+▸ Word_Tokenization/
+  __init__.py
+  __init__.pyc
+  add_compression.py
+  ensemble_classifiers.py
+  grid_search.py
+  make_classifiers.py

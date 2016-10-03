@@ -71,35 +71,36 @@ def add_compression(name, file_name_classifier,
 
                 with cd("%s/%s"%(file_path, name)):
                         print "Gzipping vectorizer"
-                        with gzip.GzipFile(new_file_name_vectorizer, 'wb') as f:
-                                dump(vectorizer, f, HIGHEST_PROTOCOL)
+                        joblib.dump(vectorizer, new_file_name_vectorizer,
+                                            compress=("zlib", 9))
                         print "Gzipping vectorizer Completed"
                         
                         print "Gzipping features"
-                        with gzip.GzipFile(new_file_name_features, 'wb') as f:
-                                dump(feature_reduction_class, f, HIGHEST_PROTOCOL)
+                        joblib.dump(feature_reduction_class,
+                                            new_file_name_features,
+                                            compress=("zlib", 9))
                         print "Gzipping features Completed"
                         
                         print "Gzipping classifier"
-                        with gzip.GzipFile(new_file_name_classifier, 'wb') as f:
-                                dump(classifier, f,  HIGHEST_PROTOCOL)
-                        print "Gzipping classifier completed "
+                        joblib.dump(classifier, new_file_name_classifier,
+                                    compress=("zlib", 9))
+                        print "Gzipping classifier completed"
                 
                 with cd("%s/%s"%(file_path, name)):
-                        print "Gzipping vectorizer"
-                        with gzip.GzipFile(new_file_name_vectorizer, 'rb') as f:
-                                print load(f)
-                        print "Gzipping vectorizer Completed"
+                        print "Loading vectorizer"
+                        with open(new_file_name_vectorizer, 'rb') as f:
+                                print joblib.load(f)
+                        print "Loading vectorizer Completed"
                         
-                        print "Gzipping features"
-                        with gzip.GzipFile(new_file_name_features, 'rb') as f:
-                                print load(f)
-                        print "Gzipping features Completed"
+                        print "Loading features"
+                        with open(new_file_name_features, 'rb') as f:
+                                print joblib.load(f)
+                        print "Loading features Completed"
                         
-                        print "Gzipping classifier"
-                        with gzip.GzipFile(new_file_name_classifier, 'rb') as f:
-                                print load(f)
-                        print "Gzipping classifier completed "
+                        print "Loading classifier"
+                        with open(new_file_name_classifier, 'rb') as f:
+                                print joblib.load(f)
+                        print "Loading classifier completed "
 
 
 
