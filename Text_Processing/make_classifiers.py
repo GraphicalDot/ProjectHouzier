@@ -237,7 +237,7 @@ class SentimentClassifiers(object):
                 """
                 import time 
                 start = time.time()
-                sentiments, sentences=zip(*sentiment_data[0: 200])
+                sentiments, sentences=zip(*sentiment_data[0: 1000])
                 sentences = GeneralMethodsClassifiers.snowball_stemmer(sentences)
                 sentences = GeneralMethodsClassifiers.pre_process_text(sentences)
                 vectorize_class = HouzierVectorizer(sentences,
@@ -272,7 +272,7 @@ class SentimentClassifiers(object):
                 X_features = combined_features.fit_transform(X_normalized,
                                                            sentiments)
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
-                        joblib.dump(combined_features, file_name_features.
+                        joblib.dump(combined_features, file_name_features,
                                     compress=("zlib", 9))
                 """
                 dump(combined_features,
@@ -297,6 +297,7 @@ class SentimentClassifiers(object):
                                                             probability=True, 
                                                             decision_function_shape="ovr",
                                                             class_weight="balanced",
+                                                            cache_size = 20000
                                                                        ),
                                                         max_samples=1.0,
                                                         max_features= 1.0, 
@@ -308,6 +309,9 @@ class SentimentClassifiers(object):
                 
                 
                 classifier.fit(X_features, sentiments)
+
+
+
 
                 print classifier.classes_
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
@@ -359,8 +363,30 @@ class SentimentClassifiers(object):
          
 
 
+        @staticmethod
+        def do_gridsearch():
+                from sklearn.grid_search import GridSearchCV
 
+               #classifier pipeline
+                clf_pipeline = clf_pipeline = OneVsRestClassifier(
+                Pipeline([('reduce_dim', RandomizedPCA()),
+                          ('clf', classifier())
+                          ]
+                         ))
 
+                C_range = 10.0 ** np.arange(-2, 9)
+                gamma_range = 10.0 ** np.arange(-5, 4)
+                n_components_range = (10, 100, 200)
+                degree_range = (1, 2, 3, 4)
+
+                param_grid = dict(estimator__clf__gamma=gamma_range,
+                      estimator__clf__c=c_range,
+                        estimator__clf__degree=degree_range,
+                        estimator__reduce_dim__n_components=n_components_range)
+                params = dict(C = C_range, gamma = gamma_range)
+                clf = GridSearchCV(OneVsRestClassifier(SVC()),params, cv=5,
+                                   n_jobs=-1)
+                return 
 
 
         @staticmethod
