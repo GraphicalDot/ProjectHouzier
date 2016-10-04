@@ -76,6 +76,13 @@ def store_with_cPickle(file_path, __object, file_name):
 
 
 
+def store_with_hdf5():
+        
+        return 
+
+
+
+
 class GeneralMethodsClassifiers(object):
         @staticmethod
         def snowball_stemmer(sentences):
@@ -265,7 +272,8 @@ class SentimentClassifiers(object):
                 X_features = combined_features.fit_transform(X_normalized,
                                                            sentiments)
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
-                        joblib.dump(combined_features, file_name_features)
+                        joblib.dump(combined_features, file_name_features.
+                                    compress=("zlib", 9))
                 """
                 dump(combined_features,
                      open('%s/%s'%(SentimentClassifiersPath,SentimentFeatureFileName), 'wb'),HIGHEST_PROTOCOL)
@@ -303,7 +311,8 @@ class SentimentClassifiers(object):
 
                 print classifier.classes_
                 with cd("%s/CompiledModels/SentimentClassifiers"%base_dir):
-                        joblib.dump(classifier, file_name_classifier)
+                        joblib.dump(classifier, file_name_classifier,
+                                    compress=("zlib", 9))
                 """
                 dump(file_name_classifier,open('%s/%s'%(SentimentClassifiersPath,
                                                        SentimentClassifierFileName

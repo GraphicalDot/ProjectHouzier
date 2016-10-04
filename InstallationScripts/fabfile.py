@@ -48,6 +48,7 @@ def basic_setup():
         #Dependicies to install hunpostagger
         env.run("sudo apt-get install -y ocaml-nox")
         env.run("sudo apt-get install -y mercurial")
+        env.run("sudo apt-get install libhdf5-dev")
         #env.run("sudo pip install numpy")
         #env.run("sudo  pip install scipy")
         #env.run("sudo pip install scikit-learn")

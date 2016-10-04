@@ -122,7 +122,9 @@ class HouzierVectorizer(object):
                 #this is a sparse matrix to convert it into dense matrix
                 #use    dt.todense()
                 with cd(self.path):
-                        joblib.dump(vectorizer.vocabulary_, self.file_name_vectorizer)
+                        joblib.dump(vectorizer.vocabulary_,
+                                    self.file_name_vectorizer,
+                                    compress=("zlib", 9))
                 #dump(vectorizer.vocabulary_, open("%s/%s"%(self.path, self.file_name_vectorizer), 'wb'), HIGHEST_PROTOCOL)
                 
                 if self.enable_print:
