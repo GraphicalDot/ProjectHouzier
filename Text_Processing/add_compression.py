@@ -54,9 +54,9 @@ def add_compression(name, file_name_classifier,
                         classifier = joblib.load(file_name_classifier)
 
 
-                new_file_name_vectorizer = "%s.gz"%file_name_vectorizer
-                new_file_name_features = "%s.gz"%file_name_features
-                new_file_name_classifier = "%s.gz"%file_name_classifier
+                new_file_name_vectorizer = "%s.joblib"%file_name_vectorizer
+                new_file_name_features = "%s.joblib"%file_name_features
+                new_file_name_classifier = "%s.joblib"%file_name_classifier
 
                 new_data_path = "%s/%s"%(file_path, name)
                 print new_file_name_features
@@ -136,7 +136,6 @@ if __name__ == "__main__":
                                         SentimentVocabularyFileName, 
                                         SentimentFeatureFileName, 
                                         SentimentClassifiersPath)
-        """
         add_compression("TagClassifiers",
                                         TagClassifierFileName,
                                          TagVocabularyFileName, 
@@ -168,7 +167,6 @@ if __name__ == "__main__":
                                               AmbienceFeatureFileName,
                                               AmbienceClassifiersPath)
         
-        """
 
 
 
