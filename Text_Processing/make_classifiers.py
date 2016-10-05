@@ -146,7 +146,8 @@ class GeneralMethodsClassifiers(object):
                 X_features = combined_features.fit_transform(X_normalized,
                                                            tags)
                 with cd(file_path):
-                        joblib.dump(combined_features, file_name_features)
+                        joblib.dump(combined_features, file_name_features, 
+                                            compress=("zlib", 9))
                 """
                 dump(combined_features, open('%s/%s'%(file_path,
                                                       file_name_features),
@@ -178,7 +179,8 @@ class GeneralMethodsClassifiers(object):
 
                 print classifier.classes_
                 with cd(file_path):
-                        joblib.dump(classifier, file_name_classifier)
+                        joblib.dump(classifier, file_name_classifier, 
+                                            compress=("zlib", 9))
                 """
                 dump(classifier, open('%s/%s'%(file_path,
                                                file_name_classifier),
