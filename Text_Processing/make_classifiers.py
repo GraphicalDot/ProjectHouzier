@@ -97,7 +97,7 @@ class GeneralMethodsClassifiers(object):
         @staticmethod
         def svm_bagclassifier(data, file_name_classifier,
                               file_name_vectorizer, file_name_features,
-                              file_path):
+                              file_path, bagging=False):
                 """
                 file_name_classifier: The name under which the joblib must
                                     store the classifier 
@@ -156,22 +156,28 @@ class GeneralMethodsClassifiers(object):
 
                 print "Feature after feature slection with pca and selectkbest\
                     of the data [%s, %s]"%X_features.shape
-
-                
-                n_estimators = 20
-                classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear', 
-                                                            C= 1,
+                n_estimators=5
+                svc_classifier = SVC(kernel='linear', 
+                                                            C= 1, 
                                                             gamma="auto", 
                                                             probability=True, 
                                                             decision_function_shape="ovr",
                                                             class_weight="balanced",
-                                                                       ),
+                                                            cache_size = 20000
+                                     )
+                
+                
+                if bagging:
+                        classifier= OneVsRestClassifier(BaggingClassifier(svc_classifier,
                                                         max_samples=1.0,
                                                         max_features= 1.0, 
                                                         n_jobs=-1, 
                                                         verbose=3, 
                                                         n_estimators=n_estimators,
                                                                    bootstrap=False))
+                else:
+                    classifier = svc_classifier 
+                
                 
                 
                 
@@ -193,7 +199,7 @@ class GeneralMethodsClassifiers(object):
         @staticmethod
         def svm_bagclassifier_prediction(data, file_name_classifier,
                               file_name_vectorizer, file_name_features,
-                              file_path):
+                              file_path, bagging=False):
 
         
                 target, sentences=zip(*data)
@@ -232,7 +238,8 @@ class SentimentClassifiers(object):
 
         @staticmethod
         def svm_bagclassifier(sentiment_data, file_name_classifier,
-                              file_name_vectorizer, file_name_features):
+                              file_name_vectorizer, file_name_features,
+                              bagging=False):
                 """
                 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5, stop_words='english')
                 X_train = vectorizer.fit_transform(sentences)
@@ -266,7 +273,7 @@ class SentimentClassifiers(object):
                 ## Maybe some original features where good, too?
                 ##this will select features basec on chi2 test 
                 
-                selection = SelectKBest(chi2, k=200)
+                selection = SelectKBest(chi2, k=2)
                 combined_features = FeatureUnion([("pca", pca), ("univ_select",
                                                                  selection)])
 
@@ -292,22 +299,27 @@ class SentimentClassifiers(object):
 
                 #clf = SVC(C=1, kernel="linear", gamma=.001, probability=True, class_weight='auto')
                 
-                n_estimators = 20
-                classifier = OneVsRestClassifier(BaggingClassifier(SVC(kernel='linear', 
+                n_estimators = 3
+                svc_classifier = SVC(kernel='linear', 
                                                             C= 1, 
                                                             gamma="auto", 
                                                             probability=True, 
                                                             decision_function_shape="ovr",
                                                             class_weight="balanced",
                                                             cache_size = 20000
-                                                                       ),
+                                     )
+                
+                
+                if bagging:
+                        classifier= OneVsRestClassifier(BaggingClassifier(svc_classifier,
                                                         max_samples=1.0,
                                                         max_features= 1.0, 
                                                         n_jobs=-1, 
                                                         verbose=3, 
                                                         n_estimators=n_estimators,
                                                                    bootstrap=False))
-                
+                else:
+                        classifier = svc_classifier 
                 
                 
                 classifier.fit(X_features, sentiments)
