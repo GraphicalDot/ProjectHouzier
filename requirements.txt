@@ -57,7 +57,7 @@ pexpect==3.3
 pika==0.10.0
 Pillow==2.9.0
 protobuf==2.5.0
-py==1.4.26
+py==1.10.0
 pyasn1==0.1.7
 pycparser==2.13
 pycrypto==2.6.1
