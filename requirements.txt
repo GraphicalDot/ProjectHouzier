@@ -36,7 +36,7 @@ idna==2.0
 ipaddr==2.1.11
 ipaddress==1.0.7
 ipwhois==0.10.2
-ipython==3.1.0
+ipython==7.16.3
 itsdangerous==0.24
 jaro-winkler==1.0.2
 jieba==0.32
