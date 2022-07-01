@@ -51,7 +51,7 @@ milk==0.6.1
 ner==0.1
 nltk==3.0.0
 numpy==1.10.1
-openpyxl==2.1.4
+openpyxl==2.4.2
 paramiko==1.15.2
 pexpect==3.3
 pika==0.10.0
