@@ -65,7 +65,7 @@ pyfiglet==0.7.4
 pymongo==2.7.1
 pyOpenSSL==0.15.1
 pytest==2.7.0
-python-jwt==1.1.1
+python-jwt==3.3.4
 python-Levenshtein==0.12.0
 python-logstash==0.4.5
 pyttsx==1.1
